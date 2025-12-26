@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Souza Farma - Sistema de Bulas Profissional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .close-button { transition: all 0.2s; }
+        .close-button:hover { transform: rotate(90deg); color: #ef4444; }
+        .logo-container { max-width: 250px; margin: 0 auto; padding: 10px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .intensity-btn.active { background-color: #4f46e5; color: white; border-color: #4338ca; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4); }
+        .freq-highlight { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; }
+        .card-med { transition: all 0.2s; border-width: 2px; }
+        .card-med:hover { transform: translateY(-3px); border-color: #6366f1; }
+        .category-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: inline-block; }
+    </style>
+
+    <script>
+        window.allMedicamentos = [];
+        const LOCAL_STORAGE_KEY = 'souzafarma_bulas_v7_complete';
+        const HISTORY_KEY = 'souzafarma_search_history';
+        const FAVORITES_KEY = 'souzafarma_favorites';
+        let searchHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+
+        // BASE DE DADOS TOTAL COMPLETA COM INFORMAÇÕES EXPANDIDAS
+        const baseMedicamentos = [
+            // --- ANTIBIÓTICOS E CLAVULANATOS ---
+            { 
+                nome: "Amoxicilina + Clavulanato 400+57mg/5mL", 
+                principioAtivo: "Amoxicilina + Clavulanato de Potássio", 
+                dosagem: "400mg+57mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Tratamento de otite média, sinusite, infecções respiratórias e urinárias causadas por bactérias sensíveis como Streptococcus pneumoniae, Haemophilus influenzae e Staphylococcus aureus.",
+                reacoesAdversas: "Diarreia (8-10%), náuseas, vômitos, candidíase oral/vaginal. Raramente: reações alérgicas graves, hepatite colestática, nefrite intersticial.",
+                contraIndicacoes: "Hipersensibilidade a penicilinas ou beta-lactâmicos. História de icterícia colestática ou disfunção hepática com amoxicilina/clavulanato.",
+                posologiaDetalhada: "Suspensão pediátrica: 25-45 mg/kg/dia de amoxicilina, dividida em 2 doses (12/12h). Adultos: 875mg/125mg a cada 12h.",
+                apresentacao: "Frasco com pó para suspensão oral de 100 mL. Após reconstituição: 400mg+57mg/5mL.",
+                conservacao: "Antes da reconstituição: temperatura ambiente. Após reconstituição: conservar entre 2°C e 8°C. Validade: 7 dias após preparação.",
+                interacoesMedicamentosas: "Anticoagulantes (varfarina) - aumenta risco de sangramento. Metotrexato - aumenta toxicidade. Anticoncepcionais orais - pode reduzir eficácia. Probenecida - aumenta concentração de amoxicilina.",
+                precaucoes: "Monitorar função hepática em tratamentos prolongados (>14 dias). Em pacientes com insuficiência renal (clearance <30 mL/min), ajustar dose. Avaliar histórico de alergias.",
+                farmacocinética: "Pico plasmático: 1-2 horas. Meia-vida: 1-1,5 horas. Eliminação renal (50-70% em 24h). Ligação proteica: 17-20%.",
+                mecanismoAcao: "Amoxicilina inibe síntese da parede celular bacteriana. Clavulanato inibe beta-lactamases, protegendo a amoxicilina.",
+                superdosagem: "Sintomas: náuseas, vômitos, diarreia. Tratamento: sintomático, hidratação. Em casos graves, considerar hemodiálise.",
+                usoEspecifico: "Suspensão pediátrica: agitar bem antes de usar. Administrar no início das refeições para melhor tolerância gastrointestinal.",
+                bulaCompleta: "https://www.anvisa.gov.br/bula/amoxicilina_clavulanato.pdf",
+                isFavorite: favorites.includes("Amoxicilina + Clavulanato 400+57mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(25 a 45 mg/kg/dia)", doseMgPerKgPerDiaMin: 25, doseMgPerKgPerDiaMax: 45, defaultDose: 30, freqDosesPorDia: 2, concentracaoMgPerMl: 80, freqTexto: "12/12h (2 vezes ao dia)." } 
+            },
+            { 
+                nome: "Amoxicilina + Clavulanato 250+62,5mg/5mL", 
+                principioAtivo: "Amoxicilina + Clavulanato de Potássio", 
+                dosagem: "250mg+62,5mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções bacterianas sensíveis em crianças. Especialmente indicado para infecções recorrentes do trato respiratório.",
+                reacoesAdversas: "Pode causar diarreia (5-10%). Agitar bem antes de usar. Reações alérgicas em pacientes sensibilizados.",
+                contraIndicacoes: "Alergia a penicilinas. História de hepatite induzida por amoxicilina/clavulanato.",
+                posologiaDetalhada: "Suspensão: 20-40 mg/kg/dia de amoxicilina, dividida em 3 doses (8/8h).",
+                apresentacao: "Frasco com pó para suspensão oral de 60 mL.",
+                conservacao: "Após preparação: refrigerar entre 2-8°C. Validado por 7 dias.",
+                mecanismoAcao: "Combinação bactericida: amoxicilina age na parede celular, clavulanato protege contra enzimas degradantes.",
+                isFavorite: favorites.includes("Amoxicilina + Clavulanato 250+62,5mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(20 a 40 mg/kg/dia)", doseMgPerKgPerDiaMin: 20, doseMgPerKgPerDiaMax: 40, defaultDose: 30, freqDosesPorDia: 3, concentracaoMgPerMl: 50, freqTexto: "8/8h (3 vezes ao dia)." } 
+            },
+            { 
+                nome: "Amoxicilina 400mg/5mL", 
+                principioAtivo: "Amoxicilina", 
+                dosagem: "400mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Amigdalite, faringite, pneumonia e infecções urinárias não complicadas. Ativo contra bactérias gram-positivas e algumas gram-negativas.",
+                reacoesAdversas: "Erupções cutâneas (5%), diarreia, náuseas. Síndrome de Stevens-Johnson rara. Agitar bem antes de usar.",
+                contraIndicacoes: "Hipersensibilidade a penicilinas. Mononucleose infecciosa (alto risco de exantema).",
+                apresentacao: "Suspensão oral 400mg/5mL, frasco 100mL.",
+                usoEspecifico: "Cumprir horário rigorosamente para manter concentração terapêutica. Não interromper tratamento precocemente.",
+                isFavorite: favorites.includes("Amoxicilina 400mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(25 a 45 mg/kg/dia)", doseMgPerKgPerDiaMin: 25, doseMgPerKgPerDiaMax: 45, defaultDose: 30, freqDosesPorDia: 2, concentracaoMgPerMl: 80, freqTexto: "12/12h (2 vezes ao dia)." } 
+            },
+            { 
+                nome: "Amoxicilina 250mg/5mL", 
+                principioAtivo: "Amoxicilina", 
+                dosagem: "250mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções bacterianas leves a moderadas em crianças. Faringotonsilite estreptocócica, otite média aguda.",
+                reacoesAdversas: "Manter em local fresco. Agitar antes de cada dose. Diarreia leve comum.",
+                posologiaDetalhada: "20-50 mg/kg/dia divididos em 3 tomas (8/8h).",
+                isFavorite: favorites.includes("Amoxicilina 250mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(20 a 50 mg/kg/dia)", doseMgPerKgPerDiaMin: 20, doseMgPerKgPerDiaMax: 50, defaultDose: 40, freqDosesPorDia: 3, concentracaoMgPerMl: 50, freqTexto: "8/8h (3 vezes ao dia)." } 
+            },
+            { 
+                nome: "Amoxicilina + Clavulanato 875/125mg", 
+                principioAtivo: "Amoxicilina + Clavulanato", 
+                dosagem: "875mg+125mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções em adultos: pneumonia adquirida na comunidade, sinusite, infecções de pele.",
+                reacoesAdversas: "Tomar no início das refeições para reduzir GI. Diarreia em 10% dos casos.",
+                contraIndicacoes: "Hipersensibilidade, hepatite prévia.",
+                posologia: "1 comprimido a cada 12 horas por 7-14 dias.",
+                apresentacao: "Comprimidos revestidos, caixa com 14 comprimidos.",
+                conservacao: "Armazenar em temperatura ambiente (15-30°C), protegido da luz e umidade.",
+                interacoesMedicamentosas: "Anticoagulantes orais (aumenta risco de sangramento), metotrexato (aumenta toxicidade), anticoncepcionais orais (pode reduzir eficácia).",
+                mecanismoAcao: "Amoxicilina: inibe síntese da parede celular bacteriana. Clavulanato: inibe beta-lactamases, protegendo a amoxicilina da degradação.",
+                isFavorite: favorites.includes("Amoxicilina + Clavulanato 875/125mg"),
+            },
+            { 
+                nome: "Azitromicina 200mg/5mL", 
+                principioAtivo: "Azitromicina", 
+                dosagem: "200mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Sinusite bacteriana aguda, pneumonia adquirida na comunidade, faringite estreptocócica em alérgicos a penicilina.",
+                reacoesAdversas: "Dor abdominal, diarreia (5%), náuseas. Raramente: prolongamento do QT, hepatotoxicidade.",
+                posologiaDetalhada: "Dose única diária. Pediátrica: 10 mg/kg/dia por 3-5 dias.",
+                farmacocinética: "Meia-vida longa (68h), permitindo dose única diária. Alta concentração tecidual.",
+                usoEspecifico: "Administrar 1h antes ou 2h após refeições. Não tomar com antiácidos.",
+                isFavorite: favorites.includes("Azitromicina 200mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(10 mg/kg/dia)", doseMgPerKgPerDiaMin: 10, doseMgPerKgPerDiaMax: 10, defaultDose: 10, freqDosesPorDia: 1, concentracaoMgPerMl: 40, freqTexto: "24/24h (Dose única)." } 
+            },
+            { 
+                nome: "Cefadroxila 250mg/5mL", 
+                principioAtivo: "Cefadroxila", 
+                dosagem: "250mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções de pele, trato urinário, faringotonsilite.",
+                reacoesAdversas: "Reações alérgicas cruzadas em 10% dos alérgicos a penicilina.",
+                isFavorite: favorites.includes("Cefadroxila 250mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(30 a 50 mg/kg/dia)", doseMgPerKgPerDiaMin: 30, doseMgPerKgPerDiaMax: 50, defaultDose: 30, freqDosesPorDia: 2, concentracaoMgPerMl: 50, freqTexto: "12/12h." } 
+            },
+            { 
+                nome: "Cefalexina 250mg/5mL", 
+                principioAtivo: "Cefalexina", 
+                dosagem: "250mg/5ml", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções por gram-positivos: Staphylococcus, Streptococcus.",
+                reacoesAdversas: "Diarreia, colite pseudomembranosa rara.",
+                isFavorite: favorites.includes("Cefalexina 250mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(25 a 50 mg/kg/dia)", doseMgPerKgPerDiaMin: 25, doseMgPerKgPerDiaMax: 50, defaultDose: 30, freqDosesPorDia: 4, concentracaoMgPerMl: 50, freqTexto: "6/6h." } 
+            },
+
+            // --- ANTIPARASITÁRIOS ---
+            { 
+                nome: "Nitazoxanida (Annita) Suspensão", 
+                principioAtivo: "Nitazoxanida 20mg/mL", 
+                dosagem: "20 mg/mL", 
+                categoria: "Antiparasitário", 
+                indicacoes: "Gastroenterites virais (rotavírus, norovírus) e parasitoses intestinais (Giardia lamblia, Cryptosporidium).",
+                reacoesAdversas: "TOMAR COM ALIMENTOS. Pode causar alteração na cor da urina (amarelo-alaranjado). Dor abdominal leve, diarreia.",
+                posologiaDetalhada: "1-3 anos: 100mg (5mL) 12/12h por 3 dias. 4-11 anos: 200mg (10mL) 12/12h por 3 dias.",
+                mecanismoAcao: "Inibe enzima dependente de piruvato:ferredoxina oxidoredutase (PFOR), essencial para metabolismo anaeróbico de parasitas.",
+                contraIndicacoes: "Hipersensibilidade ao fármaco. Crianças <1 ano.",
+                usoEspecifico: "Administrar com alimentos para melhor absorção. Suspensão: agitar antes de usar.",
+                isFavorite: favorites.includes("Nitazoxanida (Annita) Suspensão"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(15 mg/kg/dia)", doseMgPerKgPerDiaMin: 15, doseMgPerKgPerDiaMax: 15, defaultDose: 15, freqDosesPorDia: 2, concentracaoMgPerMl: 20, freqTexto: "12/12h por 3 dias (0,375 mL/kg/dose)." } 
+            },
+            { 
+                nome: "Annita Comprimido 500mg", 
+                principioAtivo: "Nitazoxanida", 
+                dosagem: "500 mg", 
+                categoria: "Antiparasitário", 
+                indicacoes: "Gastroenterites e verminoses em adultos e crianças >12 anos.",
+                reacoesAdversas: "Tomar com alimentos. Cefaleia, tontura.",
+                posologia: "1 comprimido 12/12h por 3 dias.",
+                apresentacao: "Comprimidos revestidos, caixa com 6 comprimidos.",
+                isFavorite: favorites.includes("Annita Comprimido 500mg"),
+            },
+            { 
+                nome: "Ivermectina 6mg", 
+                principioAtivo: "Ivermectina", 
+                dosagem: "6 mg", 
+                categoria: "Antiparasitário", 
+                indicacoes: "Sarna (escabiose), piolho (pediculose), estrongiloidíase.",
+                reacoesAdversas: "Prurido temporário por morte dos parasitas. Tontura, diarreia.",
+                mecanismoAcao: "Ativa canais de cloreto dependentes de glutamato, causando paralisia e morte do parasita.",
+                contraIndicacoes: "Crianças <15kg ou <5 anos. Gestantes.",
+                usoEspecifico: "Dose única. Repetir após 7-14 dias para sarna.",
+                isFavorite: favorites.includes("Ivermectina 6mg"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(0,2 mg/kg única)", doseMgPerKgPerDiaMin: 0.2, doseMgPerKgPerDiaMax: 0.2, defaultDose: 0.2, freqDosesPorDia: 1, concentracaoMgPerMl: 6, freqTexto: "Dose única." } 
+            },
+            { 
+                nome: "Albendazol 400mg", 
+                principioAtivo: "Albendazol", 
+                dosagem: "400mg", 
+                categoria: "Antiparasitário", 
+                indicacoes: "Verminoses comuns: ascaridíase, ancilostomíase, enterobíase, tricuríase.",
+                reacoesAdversas: "Dor abdominal, diarreia, tontura. Raramente: alterações hepáticas.",
+                posologia: "Dose única de 400mg. Repetir após 15 dias para alguns parasitas.",
+                apresentacao: "Comprimido mastigável.",
+                mecanismoAcao: "Inibe captação de glucose pelos parasitas, esgotando suas reservas de glicogênio.",
+                isFavorite: favorites.includes("Albendazol 400mg"),
+            },
+
+            // --- RESPIRATÓRIO E XAROPES ---
+            { 
+                nome: "Acebrofilina Xarope 25mg/5mL", 
+                principioAtivo: "Acebrofilina (Ped)", 
+                dosagem: "25 mg / 5 mL", 
+                categoria: "Expectorante", 
+                indicacoes: "Bronquite aguda e crônica, asma; ajuda a expulsar secreções brônquicas.",
+                reacoesAdversas: "Evitar em pacientes cardíacos ou com úlcera gastroduodenal. Náuseas, azia, taquicardia.",
+                mecanismoAcao: "Broncodilatador e mucolítico. Aumenta secreção brônquica e reduz sua viscosidade.",
+                posologiaDetalhada: "Crianças: 4 mg/kg/dia divididos em 2 doses.",
+                contraIndicacoes: "Úlcera péptica ativa, arritmias cardíacas, hipersensibilidade.",
+                isFavorite: favorites.includes("Acebrofilina Xarope 25mg/5mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(4 mg/kg/dia)", doseMgPerKgPerDiaMin: 4, doseMgPerKgPerDiaMax: 4, defaultDose: 4, freqDosesPorDia: 2, concentracaoMgPerMl: 5, freqTexto: "12/12h (2 vezes ao dia)." } 
+            },
+            { 
+                nome: "Acebrofilina Xarope 50mg/5mL", 
+                principioAtivo: "Acebrofilina (Adulto)", 
+                dosagem: "50 mg / 5 mL", 
+                categoria: "Expectorante", 
+                indicacoes: "Tosse com catarro em adultos, DPOC, bronquite crônica.",
+                reacoesAdversas: "Cefaleia, irritação gástrica. Administrar após refeições.",
+                posologia: "10mL de 12 em 12 horas.",
+                apresentacao: "Frasco 120mL.",
+                isFavorite: favorites.includes("Acebrofilina Xarope 50mg/5mL"),
+            },
+            { 
+                nome: "Acetilcisteína Xarope 20mg/mL", 
+                principioAtivo: "Acetilcisteína (Ped)", 
+                dosagem: "20 mg/mL", 
+                categoria: "Expectorante", 
+                indicacoes: "Fluidificação de secreções densas (muco) em bronquite, traqueíte, sinusite.",
+                reacoesAdversas: "Aumentar a ingestão de água para potencializar o efeito. Náuseas, vômitos, rash cutâneo.",
+                mecanismoAcao: "Quebra ligações dissulfeto no muco, reduzindo sua viscosidade.",
+                contraIndicacoes: "Hipersensibilidade. Asmáticos podem ter broncoespasmo.",
+                usoEspecifico: "Não administrar com antitussígenos (pode acumular secreções).",
+                isFavorite: favorites.includes("Acetilcisteína Xarope 20mg/mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(20 a 30 mg/kg/dia)", doseMgPerKgPerDiaMin: 20, doseMgPerKgPerDiaMax: 30, defaultDose: 20, freqDosesPorDia: 3, concentracaoMgPerMl: 20, freqTexto: "8/8h ou 12/12h." } 
+            },
+            { 
+                nome: "Acetilcisteína Xarope 40mg/mL", 
+                principioAtivo: "Acetilcisteína (Adulto)", 
+                dosagem: "40 mg/mL", 
+                categoria: "Expectorante", 
+                indicacoes: "Expectorante adulto para secreções espessas. Também usado como antídoto em intoxicação por paracetamol.",
+                reacoesAdversas: "Odor sulfuroso característico. Náuseas, estomatite.",
+                posologia: "15mL (1 copo) 1 vez ao dia à noite.",
+                apresentacao: "Frasco 200mL.",
+                isFavorite: favorites.includes("Acetilcisteína Xarope 40mg/mL"),
+            },
+            { 
+                nome: "Dropropizina 1,5mg/mL Xarope", 
+                principioAtivo: "Dropropizina (Ped)", 
+                dosagem: "1,5 mg/mL", 
+                categoria: "Antitussígeno", 
+                indicacoes: "Tosse seca e irritativa (sem catarro) de origem alérgica, inflamatória ou pós-infecciosa.",
+                reacoesAdversas: "Pode causar sonolência (10-20%). Não usar em tosse produtiva. Tontura, boca seca.",
+                mecanismoAcao: "Deprime o centro da tosse no bulbo sem efeito analgésico ou depressão respiratória significativa.",
+                contraIndicacoes: "Insuficiência respiratória, asma, tosse produtiva. Crianças <2 anos.",
+                usoEspecifico: "Evitar atividades que requeiram alerta. Não usar por mais de 5 dias sem avaliação médica.",
+                isFavorite: favorites.includes("Dropropizina 1,5mg/mL Xarope"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(1 a 2 mg/kg/dia)", doseMgPerKgPerDiaMin: 1, doseMgPerKgPerDiaMax: 2, defaultDose: 1.5, freqDosesPorDia: 3, concentracaoMgPerMl: 1.5, freqTexto: "8/8h (3 vezes ao dia)." } 
+            },
+            { 
+                nome: "Dropropizina 3mg/mL Xarope", 
+                principioAtivo: "Dropropizina (Adulto)", 
+                dosagem: "3 mg/mL", 
+                categoria: "Antitussígeno", 
+                indicacoes: "Tosse seca adulto, especialmente noturna que interfere no sono.",
+                reacoesAdversas: "Sonolência marcante. Evitar dirigir ou operar máquinas.",
+                posologia: "10mL até 4 vezes ao dia.",
+                isFavorite: favorites.includes("Dropropizina 3mg/mL Xarope"),
+            },
+            { 
+                nome: "Abrilar (Hedera helix)", 
+                principioAtivo: "Fitoterápico", 
+                dosagem: "7 mg/mL", 
+                categoria: "Expectorante", 
+                indicacoes: "Tosse produtiva em resfriados, bronquite aguda. Ação mucolítica e expectorante.",
+                reacoesAdversas: "Bem tolerado. Raramente: reações alérgicas, distúrbios gastrointestinais.",
+                posologia: "2,5 a 7,5mL 3x ao dia conforme idade.",
+                apresentacao: "Xarope 100mL e 200mL.",
+                usoEspecifico: "Pode ser usado em gestantes após 1º trimestre (categoria B).",
+                isFavorite: favorites.includes("Abrilar (Hedera helix)"),
+            },
+
+            // --- CORTICOIDES ---
+            { 
+                nome: "Predsim® Solução 3 mg/mL", 
+                principioAtivo: "Prednisolona", 
+                dosagem: "3 mg/mL (Pipeta)", 
+                categoria: "Corticosteroide", 
+                indicacoes: "Alergias graves (anafilaxia), asma moderada a grave, doenças inflamatórias sistémicas (lúpus, artrite reumatoide), doenças autoimunes.",
+                reacoesAdversas: "Não suspender de forma abrupta (risco de insuficiência adrenal). Usar pipeta exclusiva. Hiperglicemia, hipertensão, osteoporose, imunossupressão, síndrome de Cushing.",
+                contraIndicacoes: "Infecções sistémicas não controladas, vacinação com vírus vivos, úlcera péptica ativa, psicose.",
+                posologiaDetalhada: "Dose inicial (ataque): 1-2 mg/kg/dia. Manutenção: menor dose eficaz. Reduzir gradualmente (5-10% semanal).",
+                mecanismoAcao: "Anti-inflamatório, imunossupressor, antialérgico. Inibe fosfolipase A2, reduzindo síntese de prostaglandinas e leucotrienos.",
+                precaucoes: "Monitorar glicemia, pressão arterial, peso. Suplementar cálcio e vitamina D. Considerar proteção gástrica com IBP.",
+                interacoesMedicamentosas: "AINEs (aumenta risco GI), diuréticos (hipocalemia), antidiabéticos (reduz eficácia), vacinas (resposta diminuída).",
+                usoEspecifico: "Administrar pela manhã (7-8h) para mimetizar ritmo circadiano do cortisol. Suspensão lenta: redução de 10-20% a cada 1-2 semanas.",
+                isFavorite: favorites.includes("Predsim® Solução 3 mg/mL"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", temIntensidade: true, intensidades: [{ label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, { label: "Intermediária", valor: 1.0, obs: "(1.0 mg/kg)" }, { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }], currentIntensidade: 0.5, freqDosesPorDia: 1, concentracaoMgPerMl: 3, unidade: "mL", maxDoseDiariaMg: 60, freqTexto: "Dose total diária conforme orientação." } 
+            },
+            { 
+                nome: "Fosfato Sódico de Prednisolona 3mg/mL", 
+                principioAtivo: "Prednisolona (Genérico)", 
+                dosagem: "3 mg/mL", 
+                categoria: "Corticosteroide", 
+                indicacoes: "Anti-inflamatório potente para diversas condições alérgicas e inflamatórias.",
+                reacoesAdversas: "Retenção hídrica, aumento de apetite, irritabilidade, insônia.",
+                isFavorite: favorites.includes("Fosfato Sódico de Prednisolona 3mg/mL"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", currentIntensidade: 0.5, concentracaoMgPerMl: 3, unidade: "mL", freqTexto: "Utilizar pipeta graduada." } 
+            },
+            { 
+                nome: "Predsim Gotas 11 mg/mL", 
+                principioAtivo: "Prednisolona", 
+                dosagem: "11 mg/mL (Gotas)", 
+                categoria: "Corticosteroide", 
+                indicacoes: "Dose concentrada para alergias e inflamações que requerem doses menores em volume.",
+                reacoesAdversas: "Muito concentrado. Atenção rigorosa ao número de gotas. Risco de overdose se medido incorretamente.",
+                usoEspecifico: "Cada gota ≈ 0,55 mg de prednisolona. Ideal para doses baixas ou ajustes finos.",
+                contraIndicacoes: "Hipersensibilidade, infecções fúngicas sistêmicas.",
+                isFavorite: favorites.includes("Predsim Gotas 11 mg/mL"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", temIntensidade: true, intensidades: [{ label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }], currentIntensidade: 0.5, concentracaoMgPerMl: 11, unidade: "Gotas", maxDoseDiaria: 145, freqTexto: "Conforme peso do paciente." } 
+            },
+
+            // --- ANTI-HISTAMÍNICOS ---
+            { 
+                nome: "Fexofenadina (Allegra) Suspensão", 
+                principioAtivo: "Fexofenadina", 
+                dosagem: "6 mg/mL", 
+                categoria: "Anti-histamínico", 
+                indicacoes: "Rinite alérgica perene e sazonal, urticária idiopática crônica em crianças.",
+                reacoesAdversas: "Pouca sedação (2-3%). Cefaleia, náuseas. Não metabólito ativo da terfenadina (seguro cardíaco).",
+                mecanismoAcao: "Antagonista seletivo de receptores H1 periféricos. Não atravessa bem a barreira hematoencefálica.",
+                posologiaDetalhada: "Crianças 2-11 anos: 30mg (5mL) 12/12h. 6 meses-2 anos: 15mg (2,5mL) 12/12h.",
+                usoEspecifico: "Pode ser administrado com ou sem alimentos. Não sofre metabolismo hepático significativo.",
+                isFavorite: favorites.includes("Fexofenadina (Allegra) Suspensão"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(2 a 5 mg/kg/dia)", doseMgPerKgPerDiaMin: 2, doseMgPerKgPerDiaMax: 5, defaultDose: 2, freqDosesPorDia: 2, concentracaoMgPerMl: 6, freqTexto: "12/12h." } 
+            },
+            { 
+                nome: "Hidroxizina Suspensão", 
+                principioAtivo: "Hixizine", 
+                dosagem: "2 mg/mL", 
+                categoria: "Anti-histamínico", 
+                indicacoes: "Prurido (comichão) de origem alérgica, urticária, ansiedade pré-operatória.",
+                reacoesAdversas: "Causa sonolência intensa (30-50%). Boca seca, tontura, retenção urinária.",
+                contraIndicacoes: "Glaucoma de ângulo fechado, hipertrofia prostática, porfiria.",
+                precaucoes: "Evitar álcool, dirigir ou operar máquinas. Idosos mais sensíveis a efeitos anticolinérgicos.",
+                isFavorite: favorites.includes("Hidroxizina Suspensão"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(2 mg/kg/dia)", doseMgPerKgPerDiaMin: 2, doseMgPerKgPerDiaMax: 2, defaultDose: 2, freqDosesPorDia: 3, concentracaoMgPerMl: 2, freqTexto: "8/8h." } 
+            },
+            { 
+                nome: "Dexclorfeniramina + Betametasona Susp.", 
+                principioAtivo: "Koide D / Celestamine", 
+                dosagem: "Xarope", 
+                categoria: "Corticosteroide + Anti-histamínico", 
+                indicacoes: "Alergias severas com componente inflamatório importante: angioedema, dermatite de contato grave.",
+                reacoesAdversas: "Sonolência + efeitos corticosteroides. Uso limitado a 5-7 dias.",
+                precaucoes: "Não usar em infecções virais ativas. Monitorar glicemia se uso prolongado.",
+                isFavorite: favorites.includes("Dexclorfeniramina + Betametasona Susp."),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(0,15 mg/kg/dose)", doseMgPerKgPerDiaMin: 0.15, doseMgPerKgPerDiaMax: 0.25, defaultDose: 0.2, freqDosesPorDia: 3, concentracaoMgPerMl: 0.4, freqTexto: "8/8h." } 
+            },
+            { 
+                nome: "Dexclorfeniramina Suspensão", 
+                principioAtivo: "Polaramine", 
+                dosagem: "0,4 mg/mL", 
+                categoria: "Anti-histamínico", 
+                indicacoes: "Rinite alérgica, conjuntivite alérgica, urticária.",
+                reacoesAdversas: "Sonolência moderada, boca seca. Efeito sedativo menor que hidroxizina.",
+                isFavorite: favorites.includes("Dexclorfeniramina Suspensão"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { doseMgPerKgPerDiaMin: 0.15, defaultDose: 0.15, freqDosesPorDia: 3, concentracaoMgPerMl: 0.4, freqTexto: "8/8h." } 
+            },
+            { 
+                nome: "Loratadina Xarope", 
+                principioAtivo: "Loratadina", 
+                dosagem: "1 mg/mL", 
+                categoria: "Anti-histamínico", 
+                indicacoes: "Alergias em geral. Não causa sono significativo. Rinite alérgica, urticária crônica.",
+                reacoesAdversas: "Cefaleia (12%), fadiga (4%), boca seca (3%).",
+                posologia: "Pediatria: 5 a 10mL 1 vez ao dia. Adultos: 10mL/dia.",
+                apresentacao: "Frasco 100mL.",
+                usoEspecifico: "Pode ser administrado a qualquer hora do dia. Efeito inicia em 1-3h, duração 24h.",
+                isFavorite: favorites.includes("Loratadina Xarope"),
+            },
+            { 
+                nome: "Desloratadina Xarope", 
+                principioAtivo: "Desloratadina", 
+                dosagem: "0,5 mg/mL", 
+                categoria: "Anti-histamínico", 
+                indicacoes: "Rinite alérgica e urticária. Metabolito ativo da loratadina, mais potente.",
+                reacoesAdversas: "Poucos efeitos adversos. Fadiga (1-2%), boca seca (2%).",
+                posologia: "Crianças: 2,5 a 5mL 1 vez ao dia. Adultos: 10mL/dia.",
+                mecanismoAcao: "Antagonista H1 seletivo. Início em 30min, pico em 3h, duração 24h.",
+                isFavorite: favorites.includes("Desloratadina Xarope"),
+            },
+            { 
+                nome: "Cetirizina Gotas", 
+                principioAtivo: "Cetirizina", 
+                dosagem: "10 mg/mL", 
+                categoria: "Anti-histamínico",
+                indicacoes: "Rinite alérgica, urticária crônica. Sedação leve (10-15%).",
+                reacoesAdversas: "Sonolência, fadiga, boca seca.",
+                posologiaDetalhada: "Crianças 2-6 anos: 5 gotas (2,5mg) 12/12h. >6 anos: 10 gotas (5mg) 1x/dia.",
+                isFavorite: favorites.includes("Cetirizina Gotas"),
+            },
+
+            // --- ANALGÉSICOS E ANTIESPASMÓDICOS ---
+            { 
+                nome: "Dipirona 500mg/mL Gotas", 
+                principioAtivo: "Dipirona", 
+                dosagem: "500 mg/mL", 
+                categoria: "Analgésico", 
+                indicacoes: "Febre e dores intensas (pós-operatório, cólica renal, dor oncológica).",
+                reacoesAdversas: "Atenção a quedas de pressão. Contraindicado em menores de 3 meses. Agranulocitose rara (1:1.000.000).",
+                mecanismoAcao: "Inibe ciclo-oxigenase central e periférica. Efeito antiespasmódico direto na musculatura lisa.",
+                contraIndicacoes: "Porfiria aguda intermitente, asma induzida por AINEs, alergia a pirazolonas.",
+                precaucoes: "Monitorar pressão arterial em idosos e desidratados. Evitar uso prolongado (>5 dias).",
+                superdosagem: "Náuseas, vômitos, hipotensão, taquicardia. Tratamento sintomático. Não tem antídoto específico.",
+                usoEspecifico: "Cada gota ≈ 25mg de dipirona. Dose máxima diária: 4 doses espaçadas de 6/6h.",
+                isFavorite: favorites.includes("Dipirona 500mg/mL Gotas"),
+                tipoCalculo: "tabelaDipirona", 
+                pesoBaseCalculo: { infoDoseRef: "(8 a 16 mg/kg/dose)", maxDoseDiaria: 160, freqTexto: "Até 4 vezes ao dia (6/6h)." } 
+            },
+            { 
+                nome: "Ibuprofeno 100mg/mL Gotas", 
+                principioAtivo: "Ibuprofeno", 
+                dosagem: "100 mg/mL", 
+                categoria: "Analgésico", 
+                indicacoes: "Febre e inflamações leves a moderadas (otite, faringite, dor pós-extracção dentária).",
+                reacoesAdversas: "NÃO USAR SE HOUVER SUSPEITA DE DENGUE. Tomar após comer. Irritação GI, risco de sangramento, nefropatia analgésica.",
+                mecanismoAcao: "Inibe COX-1 e COX-2 não seletivamente. Anti-inflamatório, analgésico, antipirético.",
+                contraIndicacoes: "Úlcera péptica ativa, insuficiência renal grave, hipersensibilidade a AINEs, 3º trimestre de gestação.",
+                precaucoes: "Usar menor dose efetiva pelo menor tempo possível. Monitorar função renal em uso crônico.",
+                interacoesMedicamentosas: "Anticoagulantes (aumenta risco sangramento), lítio (aumenta níveis), anti-hipertensivos (reduz efeito).",
+                superdosagem: "Dor abdominal, náuseas, letargia. N-acetilcisteína pode ser benéfica.",
+                usoEspecifico: "Administrar com alimentos ou leite. Efeito antipirético em 30-60 min, duração 6-8h.",
+                isFavorite: favorites.includes("Ibuprofeno 100mg/mL Gotas"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(5 a 10 mg/kg/dose)", temIntensidade: true, intensidades: [{ label: "Leve", valor: 5, obs: "(5 mg/kg)" }, { label: "Intensa", valor: 10, obs: "(10 mg/kg)" }], currentIntensidade: 5, concentracaoMgPerMl: 100, unidade: "Gotas", maxDosePorTomada: 20, maxDoseDiaria: 80, freqTexto: "A cada 6 ou 8 horas." } 
+            },
+            { 
+                nome: "Ibuprofeno 50mg/mL Gotas", 
+                principioAtivo: "Ibuprofeno", 
+                dosagem: "50 mg/mL", 
+                categoria: "Analgésico", 
+                indicacoes: "Versão menos concentrada para dosagem mais precisa em crianças pequenas.",
+                reacoesAdversas: "Mesmo perfil de segurança do ibuprofeno 100mg/mL.",
+                isFavorite: favorites.includes("Ibuprofeno 50mg/mL Gotas"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(5 a 10 mg/kg/dose)", currentIntensidade: 5, concentracaoMgPerMl: 50, unidade: "Gotas", freqTexto: "A cada 6 ou 8 horas." } 
+            },
+            { 
+                nome: "Paracetamol 200mg/mL Gotas", 
+                principioAtivo: "Paracetamol", 
+                dosagem: "200 mg/mL", 
+                categoria: "Analgésico", 
+                indicacoes: "Analgésico de escolha para Dengue, febre e dor leve a moderada. Seguro em gestantes (categoria B).",
+                reacoesAdversas: "Hepatotoxicidade dose-dependente (>150mg/kg em dose única). Náuseas, rash cutâneo.",
+                mecanismoAcao: "Inibe COX central com pouca atividade periférica. Bom antipirético, fraco anti-inflamatório.",
+                contraIndicacoes: "Hepatopatia grave, alcoolismo crônico, deficiência de G6PD.",
+                precaucoes: "Dose máxima diária: 4g adultos, 60mg/kg crianças. Intervalo mínimo: 4h entre doses.",
+                superdosagem: "Náuseas, vômitos, dor abdominal em 24h. Hepatotoxicidade em 48-72h. Antídoto: N-acetilcisteína.",
+                usoEspecifico: "Medicamento de primeira linha para febre em crianças. Não possui atividade anti-inflamatória significativa.",
+                isFavorite: favorites.includes("Paracetamol 200mg/mL Gotas"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(10 a 15 mg/kg/dose)", currentIntensidade: 12, concentracaoMgPerMl: 200, unidade: "Gotas", freqTexto: "A cada 4 ou 6 horas." } 
+            },
+            
+            // --- GASTRO E ANTIEMÉTICOS ---
+            { 
+                nome: "Buscopan® Composto Gotas", 
+                principioAtivo: "Escopolamina + Dipirona", 
+                dosagem: "Gotas", 
+                categoria: "Antiespasmódico", 
+                indicacoes: "Cólicas fortes (renais, biliares, intestinais) com componente doloroso importante.",
+                reacoesAdversas: "Boca seca, retenção urinária, taquicardia, visão turva (efeitos anticolinérgicos).",
+                mecanismoAcao: "Escopolamina: anticolinérgico que relaxa musculatura lisa. Dipirona: analgésico e antiespasmódico.",
+                contraIndicacoes: "Glaucoma, hipertrofia prostática, íleo paralítico, miastenia gravis.",
+                precaucoes: "Idosos mais sensíveis. Evitar em crianças <6 meses. Não usar por mais de 2 dias sem diagnóstico.",
+                isFavorite: favorites.includes("Buscopan® Composto Gotas"),
+                tipoCalculo: "tabelaBuscopanComposto", 
+                pesoBaseCalculo: { freqTexto: "3 a 4 vezes ao dia." } 
+            },
+            { 
+                nome: "Buscopan® Gotas (Simples)", 
+                principioAtivo: "Butilbrometo de Escopolamina", 
+                dosagem: "10 mg/mL", 
+                categoria: "Antiespasmódico", 
+                indicacoes: "Cólicas leves e gases, espasmos GI, síndrome do intestino irritável.",
+                reacoesAdversas: "Efeitos anticolinérgicos leves. Contraindicado em glaucoma.",
+                mecanismoAcao: "Antagonista muscarínico que relaxa musculatura lisa do trato gastrointestinal.",
+                isFavorite: favorites.includes("Buscopan® Gotas (Simples)"),
+                tipoCalculo: "tabelaBuscopan", 
+                pesoBaseCalculo: { infoDoseRef: "(0,3 a 1,5 mg/kg/dose)", freqTexto: "3 vezes ao dia (8/8h)." } 
+            },
+            { 
+                nome: "Bromoprida Gotas", 
+                principioAtivo: "Bromoprida", 
+                dosagem: "4 mg/mL", 
+                categoria: "Antiemético", 
+                indicacoes: "Vómitos e náuseas de diversas etiologias (gastroenterite, quimioterapia, pós-operatório).",
+                reacoesAdversas: "Atenção a reacções de tontura ou espasmos em crianças pequenas. Sonolência, efeitos extrapiramidais raros.",
+                mecanismoAcao: "Antagonista dopaminérgico (D2) com ação antiemética e pró-cinética GI.",
+                contraIndicacoes: "Feocromocitoma, obstrução GI, hemorragia digestiva, epilepsia.",
+                precaucoes: "Evitar em crianças <1 ano. Monitorar por reações extrapiramidais (distonia, discinesia).",
+                interacoesMedicamentosas: "Potencia efeitos de depressores do SNC. Anticolinérgicos antagonizam seu efeito.",
+                usoEspecifico: "Administrar 30 min antes das refeições. Efeito antiemético em 30-60 min.",
+                isFavorite: favorites.includes("Bromoprida Gotas"),
+                tipoCalculo: "intensidade", 
+                pesoBaseCalculo: { infoDoseRef: "(1 gota/kg/dose)", currentIntensidade: 0.2, concentracaoMgPerMl: 4, unidade: "Gotas", maxDosePorTomada: 40, freqDosesPorDia: 3, freqTexto: "3 vezes ao dia (a cada 8 horas)." } 
+            },
+            { 
+                nome: "Domperidona Suspensão", 
+                principioAtivo: "Domperidona", 
+                dosagem: "1 mg/mL", 
+                categoria: "Gastrocinético", 
+                indicacoes: "Refluxo gastroesofágico, má digestão, náuseas. Não atravessa barreira hematoencefálica significativamente.",
+                reacoesAdversas: "Menos efeitos extrapiramidais que metoclopramida. Galactorreia, aumento de prolactina.",
+                mecanismoAcao: "Antagonista periférico de receptores D2. Aumenta motilidade GI e tone do EEI.",
+                contraIndicacoes: "Hemorragia GI, obstrução mecânica, prolactinoma.",
+                precaucoes: "Monitorar intervalo QT em doses altas. Evitar com inibidores do CYP3A4.",
+                isFavorite: favorites.includes("Domperidona Suspensão"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { infoDoseRef: "(0,75 mg/kg/dia)", doseMgPerKgPerDiaMin: 0.75, defaultDose: 0.75, freqDosesPorDia: 3, concentracaoMgPerMl: 1, freqTexto: "3 vezes ao dia (antes de comer)." } 
+            },
+            { 
+                nome: "Decongex Plus Gotas", 
+                principioAtivo: "Fenilefrina + Bronfeniramina", 
+                dosagem: "Gotas", 
+                categoria: "Descongestionante", 
+                indicacoes: "Nariz entupido e rinite. Fenilefrina: descongestionante. Bronfeniramina: anti-histamínico.",
+                reacoesAdversas: "Taquicardia, hipertensão (fenilefrina). Sonolência (bronfeniramina).",
+                contraIndicacoes: "Hipertensão não controlada, cardiopatia, hipertireoidismo.",
+                precaucoes: "Não usar por mais de 5-7 dias (rinite medicamentosa). Cautela em idosos.",
+                isFavorite: favorites.includes("Decongex Plus Gotas"),
+                tipoCalculo: "tabelaDecongexGotas", 
+                pesoBaseCalculo: { maxDoseDiariaGotas: 60, freqTexto: "Administrar 3 vezes ao dia (8/8h)." } 
+            },
+            { 
+                nome: "Decongex Plus Xarope", 
+                principioAtivo: "Xarope", 
+                dosagem: "Xarope", 
+                categoria: "Descongestionante", 
+                indicacoes: "Resfriado e coriza com múltiplos sintomas.",
+                reacoesAdversas: "Sono, boca seca, retenção urinária em idosos.",
+                isFavorite: favorites.includes("Decongex Plus Xarope"),
+                tipoCalculo: "tabelaDecongex", 
+                pesoBaseCalculo: { maxDoseDiariaMl: 60, freqTexto: "3 a 4 vezes ao dia." } 
+            },
+            { 
+                nome: "Luftal (Simeticona) Gotas", 
+                principioAtivo: "Simeticona", 
+                dosagem: "75 mg/mL", 
+                categoria: "Antigases", 
+                indicacoes: "Gases intestinais, distensão abdominal, cólicas gasosas.",
+                reacoesAdversas: "Seguro, sem efeitos sistêmicos. Não é absorvido.",
+                mecanismoAcao: "Agente antiflatulento que reduz tensão superficial das bolhas de gás, facilitando sua eliminação.",
+                posologia: "Lactentes: 3-5 Gotas. Crianças: 5-10 Gotas. Adultos: 10-30 Gotas, após refeições ou conforme necessidade.",
+                usoEspecifico: "Pode ser usado em recém-nascidos. Não interage com outros medicamentos.",
+                isFavorite: favorites.includes("Luftal (Simeticona) Gotas"),
+            },
+            { 
+                nome: "Dramin B6 Gotas", 
+                principioAtivo: "Dimenidrinato", 
+                dosagem: "Gotas", 
+                categoria: "Antiemético", 
+                indicacoes: "Enjoo de viagem (cinetose), vertigem, náuseas vestibulares.",
+                reacoesAdversas: "Sonolência intensa, boca seca, visão turva.",
+                mecanismoAcao: "Antagonista H1 com efeitos anticolinérgicos e depressão do labirinto.",
+                posologia: "1 gota por kg de peso por dose. Administrar 30-60 min antes da viagem.",
+                contraIndicacoes: "Glaucoma, asma, hipertrofia prostática.",
+                precaucoes: "Evitar dirigir ou operar máquinas. Efeito dura 4-6 horas.",
+                isFavorite: favorites.includes("Dramin B6 Gotas"),
+            },
+
+            // --- NOVOS MEDICAMENTOS ADICIONADOS ---
+            
+            // --- ANTI-HIPERTENSIVOS E CARDIOVASCULARES ---
+            { 
+                nome: "Captopril 25mg", 
+                principioAtivo: "Captopril", 
+                dosagem: "25mg", 
+                categoria: "Anti-hipertensivo", 
+                indicacoes: "Hipertensão arterial, insuficiência cardíaca, nefropatia diabética.",
+                reacoesAdversas: "Tosse seca (10-20%), hipotensão, rash cutâneo, angioedema raro.",
+                contraIndicacoes: "Gestação, estenose bilateral da artéria renal, angioedema prévio.",
+                posologiaDetalhada: "Inicial: 12,5-25mg 2x/dia. Manutenção: 25-50mg 2x/dia.",
+                apresentacao: "Comprimidos 25mg, caixa com 30 comprimidos.",
+                conservacao: "Armazenar em temperatura ambiente, protegido da luz e umidade.",
+                mecanismoAcao: "Inibidor da enzima conversora de angiotensina (IECA), reduz a formação de angiotensina II.",
+                precaucoes: "Monitorar função renal e potássio sérico. Evitar uso em gestantes.",
+                isFavorite: favorites.includes("Captopril 25mg"),
+            },
+            { 
+                nome: "Losartana 50mg", 
+                principioAtivo: "Losartana Potássica", 
+                dosagem: "50mg", 
+                categoria: "Anti-hipertensivo", 
+                indicacoes: "Hipertensão arterial, proteção renal em diabéticos, insuficiência cardíaca.",
+                reacoesAdversas: "Tontura, hipercalemia, tosse menos frequente que IECA.",
+                contraIndicacoes: "Gestação, estenose da artéria renal bilateral.",
+                posologiaDetalhada: "50mg 1x/dia, podendo aumentar para 100mg conforme necessidade.",
+                apresentacao: "Comprimidos 50mg, caixa com 30 comprimidos.",
+                mecanismoAcao: "Bloqueador do receptor da angiotensina II (BRA), promove vasodilatação.",
+                usoEspecifico: "Pode ser administrado com ou sem alimentos.",
+                isFavorite: favorites.includes("Losartana 50mg"),
+            },
+            { 
+                nome: "Hidroclorotiazida 25mg", 
+                principioAtivo: "Hidroclorotiazida", 
+                dosagem: "25mg", 
+                categoria: "Diurético", 
+                indicacoes: "Hipertensão leve a moderada, edema por ICC, insuficiência renal.",
+                reacoesAdversas: "Hipocalemia, hiperuricemia, hiperglicemia, fotossensibilidade.",
+                contraIndicacoes: "Anúria, alergia a sulfonamidas, insuficiência renal grave.",
+                posologiaDetalhada: "12,5-25mg 1x/dia pela manhã. Dose máxima: 50mg/dia.",
+                precaucoes: "Monitorar potássio sérico. Evitar uso em gota.",
+                mecanismoAcao: "Diurético tiazídico que inibe reabsorção de sódio e cloro no túbulo contornado distal.",
+                isFavorite: favorites.includes("Hidroclorotiazida 25mg"),
+            },
+            { 
+                nome: "AAS 100mg", 
+                principioAtivo: "Ácido Acetilsalicílico", 
+                dosagem: "100mg", 
+                categoria: "Antiagregante Plaquetário", 
+                indicacoes: "Prevenção secundária de eventos cardiovasculares, angina instável, infarto do miocárdio.",
+                reacoesAdversas: "Sangramento gastrointestinal, úlcera péptica, broncoespasmo em asmáticos.",
+                contraIndicacoes: "Úlcera péptica ativa, hemofilia, alergia a AINEs.",
+                posologia: "100mg 1x/dia.",
+                apresentacao: "Comprimidos revestidos, caixa com 30 comprimidos.",
+                mecanismoAcao: "Inibe irreversivelmente a ciclo-oxigenase plaquetária, impedindo agregação plaquetária.",
+                isFavorite: favorites.includes("AAS 100mg"),
+            },
+
+            // --- ANTIDIABÉTICOS ---
+            { 
+                nome: "Metformina 850mg", 
+                principioAtivo: "Cloridrato de Metformina", 
+                dosagem: "850mg", 
+                categoria: "Antidiabético", 
+                indicacoes: "Diabetes mellitus tipo 2, síndrome do ovário policístico.",
+                reacoesAdversas: "Distúrbios gastrointestinais (diarreia, náuseas), acidose láctica rara.",
+                contraIndicacoes: "Insuficiência renal (creatinina >1,5mg/dL), acidose metabólica.",
+                posologiaDetalhada: "Iniciar com 500mg 2x/dia, aumentar gradualmente até 850mg 2x/dia.",
+                apresentacao: "Comprimidos revestidos 850mg, caixa com 30 comprimidos.",
+                mecanismoAcao: "Diminui produção hepática de glicose e aumenta sensibilidade à insulina.",
+                precaucoes: "Monitorar função renal anualmente. Suspender antes de exames com contraste iodado.",
+                isFavorite: favorites.includes("Metformina 850mg"),
+            },
+            { 
+                nome: "Glibenclamida 5mg", 
+                principioAtivo: "Glibenclamida", 
+                dosagem: "5mg", 
+                categoria: "Antidiabético", 
+                indicacoes: "Diabetes mellitus tipo 2 quando dieta e exercício não são suficientes.",
+                reacoesAdversas: "Hipoglicemia (especialmente em idosos), ganho de peso.",
+                contraIndicacoes: "Diabetes tipo 1, cetoacidose diabética, insuficiência renal grave.",
+                posologiaDetalhada: "2,5-5mg 1x/dia, podendo aumentar até 20mg/dia em doses divididas.",
+                precaucoes: "Monitorar glicemia, risco de hipoglicemia severa.",
+                mecanismoAcao: "Sulfonilureia que estimula secreção de insulina pelas células beta pancreáticas.",
+                isFavorite: favorites.includes("Glibenclamida 5mg"),
+            },
+
+            // --- ANSIOLÍTICOS E ANTIDEPRESSIVOS ---
+            { 
+                nome: "Diazepam 10mg", 
+                principioAtivo: "Diazepam", 
+                dosagem: "10mg", 
+                categoria: "Ansiolítico", 
+                indicacoes: "Ansiedade aguda, síndrome de abstinência alcoólica, espasmos musculares.",
+                reacoesAdversas: "Sedação, ataxia, dependência, depressão respiratória em altas doses.",
+                contraIndicacoes: "Miastenia gravis, apneia do sono, insuficiência respiratória grave.",
+                posologiaDetalhada: "5-10mg 2-3x/dia. Uso por curto período (2-4 semanas).",
+                apresentacao: "Comprimidos 10mg, caixa com 20 comprimidos.",
+                mecanismoAcao: "Agonista dos receptores GABA-A, potencializando a inibição neuronal.",
+                precaucoes: "Risco de dependência e tolerância. Evitar uso prolongado.",
+                isFavorite: favorites.includes("Diazepam 10mg"),
+            },
+            { 
+                nome: "Fluoxetina 20mg", 
+                principioAtivo: "Cloridrato de Fluoxetina", 
+                dosagem: "20mg", 
+                categoria: "Antidepressivo", 
+                indicacoes: "Depressão maior, TOC, bulimia nervosa, transtorno de pânico.",
+                reacoesAdversas: "Náuseas, insônia, disfunção sexual, perda de peso inicial.",
+                contraIndicacoes: "Uso com IMAO, hipersensibilidade.",
+                posologiaDetalhada: "20mg 1x/dia pela manhã. Pode aumentar para 40-60mg/dia se necessário.",
+                apresentacao: "Cápsulas 20mg, caixa com 28 cápsulas.",
+                mecanismoAcao: "Inibidor seletivo da recaptação de serotonina (ISRS).",
+                precaucoes: "Risco de síndrome serotoninérgica. Desmame gradual.",
+                isFavorite: favorites.includes("Fluoxetina 20mg"),
+            },
+
+            // --- CONTACEPTIVOS E HORMÔNIOS ---
+            { 
+                nome: "Levonorgestrel + Etinilestradiol", 
+                principioAtivo: "Contraceptivo Oral Combinado", 
+                dosagem: "0,15mg + 0,03mg", 
+                categoria: "Contraceptivo", 
+                indicacoes: "Contracepção hormonal, regularização menstrual, acne hormonal.",
+                reacoesAdversas: "Náuseas, cefaleia, tromboembolismo venoso (risco aumentado).",
+                contraIndicacoes: "História de trombose, câncer de mama, hepatopatia grave.",
+                posologiaDetalhada: "1 comprimido/dia por 21 dias, seguido de 7 dias de pausa.",
+                apresentacao: "Cartela com 21 comprimidos.",
+                mecanismoAcao: "Inibe ovulação, altera endométrio e muco cervical.",
+                precaucoes: "Não proteger contra ISTs. Atraso >12h pode comprometer eficácia.",
+                isFavorite: favorites.includes("Levonorgestrel + Etinilestradiol"),
+            },
+            { 
+                nome: "Levotiroxina 50mcg", 
+                principioAtivo: "Levotiroxina Sódica", 
+                dosagem: "50mcg", 
+                categoria: "Hormônio Tireoidiano", 
+                indicacoes: "Hipotireoidismo, bócio, terapia supressora em câncer de tireoide.",
+                reacoesAdversas: "Sinais de hipertireoidismo se dose excessiva: taquicardia, perda de peso.",
+                contraIndicacoes: "Hipertireoidismo não tratado, infarto agudo do miocárdio recente.",
+                posologiaDetalhada: "Dose inicial 25-50mcg/dia, ajustada conforme TSH.",
+                apresentacao: "Comprimidos 50mcg, caixa com 30 comprimidos.",
+                mecanismoAcao: "Hormônio tireoidiano sintético que substitui T4 endógeno.",
+                usoEspecifico: "Tomar em jejum, 30-60 minutos antes do café. Não tomar com cálcio/ferro.",
+                isFavorite: favorites.includes("Levotiroxina 50mcg"),
+            },
+
+            // --- ANTIFÚNGICOS ---
+            { 
+                nome: "Fluconazol 150mg", 
+                principioAtivo: "Fluconazol", 
+                dosagem: "150mg", 
+                categoria: "Antifúngico", 
+                indicacoes: "Candidíase vaginal, micoses sistêmicas, profilaxia em imunossuprimidos.",
+                reacoesAdversas: "Cefaleia, náuseas, hepatotoxicidade rara, prolongamento do QT.",
+                contraIndicacoes: "Hipersensibilidade, uso com cisaprida ou terfenadina.",
+                posologiaDetalhada: "Candidíase vaginal: dose única de 150mg.",
+                apresentacao: "Comprimido 150mg, caixa com 1 ou 2 comprimidos.",
+                mecanismoAcao: "Inibe síntese de ergosterol, componente essencial da membrana fúngica.",
+                precaucoes: "Monitorar função hepática em uso prolongado.",
+                isFavorite: favorites.includes("Fluconazol 150mg"),
+            },
+
+            // --- VITAMINAS E SUPLEMENTOS ---
+            { 
+                nome: "Vitamina D 7.000 UI", 
+                principioAtivo: "Colecalciferol", 
+                dosagem: "7.000 UI", 
+                categoria: "Vitamina", 
+                indicacoes: "Deficiência de vitamina D, osteoporose, suporte imunológico.",
+                reacoesAdversas: "Hipercalcemia em doses excessivas, náuseas, constipação.",
+                contraIndicacoes: "Hipercalcemia, hipervitaminose D.",
+                posologiaDetalhada: "1 cápsula por semana ou conforme prescrição médica.",
+                apresentacao: "Cápsulas moles, frasco com 30 cápsulas.",
+                mecanismoAcao: "Promove absorção de cálcio e fósforo no intestino, mineralização óssea.",
+                usoEspecifico: "Tomar com refeição gordurosa para melhor absorção.",
+                isFavorite: favorites.includes("Vitamina D 7.000 UI"),
+            },
+            { 
+                nome: "Ômega 3 1000mg", 
+                principioAtivo: "Ácido Eicosapentaenoico + Ácido Docosahexaenoico", 
+                dosagem: "1000mg", 
+                categoria: "Suplemento", 
+                indicacoes: "Suporte cardiovascular, redução de triglicerídeos, saúde cerebral.",
+                reacoesAdversas: "Sabor de peixe regurgitado, desconforto gastrointestinal.",
+                contraIndicacoes: "Hipersensibilidade a peixes ou frutos do mar.",
+                posologiaDetalhada: "1-2 cápsulas ao dia, com as refeições.",
+                apresentacao: "Cápsulas gelatinosas, frasco com 60 cápsulas.",
+                mecanismoAcao: "Ácidos graxos essenciais que modulam inflamação e função celular.",
+                precaucoes: "Cautela em uso com anticoagulantes (pode potencializar efeito).",
+                isFavorite: favorites.includes("Ômega 3 1000mg"),
+            },
+            { 
+                nome: "Polivitamínico Adulto", 
+                principioAtivo: "Complexo Multivitamínico", 
+                dosagem: "Comprimido", 
+                categoria: "Vitamina", 
+                indicacoes: "Suplementação vitamínica e mineral para adultos, fadiga, convalescença.",
+                reacoesAdversas: "Urina amarela fluorescente (vitamina B2), náuseas em estômago vazio.",
+                contraIndicacoes: "Hipersensibilidade a qualquer componente.",
+                posologia: "1 comprimido ao dia, preferencialmente com refeição.",
+                apresentacao: "Comprimidos revestidos, frasco com 30 comprimidos.",
+                usoEspecifico: "Não exceder a dose recomendada. Manter fora do alcance de crianças.",
+                isFavorite: favorites.includes("Polivitamínico Adulto"),
+            }
+        ];
+
+        const initApp = async () => {
+            const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+            let userList = saved ? JSON.parse(saved) : [];
+            
+            // Atualizar favoritos em todos os medicamentos
+            baseMedicamentos.forEach(med => {
+                med.isFavorite = favorites.includes(med.nome);
+            });
+            
+            window.allMedicamentos = [...baseMedicamentos];
+            userList.forEach(uMed => {
+                if(!window.allMedicamentos.find(m => m.nome === uMed.nome)) {
+                    uMed.isFavorite = favorites.includes(uMed.nome);
+                    window.allMedicamentos.push(uMed);
+                }
+            });
+            searchMedicamentos('');
+            
+            // Inicializar filtros de categoria
+            initCategoryFilters();
+            
+            document.getElementById('loading-overlay').classList.add('hidden');
+        };
+
+        const initCategoryFilters = () => {
+            const categories = [...new Set(window.allMedicamentos.map(m => m.categoria).filter(Boolean))];
+            const container = document.getElementById('category-filters');
+            if (container) {
+                container.innerHTML = `
+                    <button onclick="filterByCategory('')" class="px-4 py-2 text-xs font-bold bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition">Todos</button>
+                    ${categories.map(cat => {
+                        const color = getCategoryColor(cat);
+                        return `<button onclick="filterByCategory('${cat}')" class="px-4 py-2 text-xs font-bold rounded-full hover:opacity-90 transition" style="background-color: ${color}20; color: ${color}">${cat}</button>`;
+                    }).join('')}
+                    <button onclick="showFavorites()" class="px-4 py-2 text-xs font-bold bg-yellow-100 text-yellow-700 rounded-full hover:bg-yellow-200 transition">
+                        <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                        Favoritos
+                    </button>
+                `;
+            }
+        };
+
+        window.filterByCategory = (category) => {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.value = '';
+            
+            if (!category) {
+                searchMedicamentos('');
+                return;
+            }
+            const results = window.allMedicamentos.filter(med => 
+                med.categoria === category
+            );
+            displayResults(results);
+        };
+
+        window.showFavorites = () => {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) searchInput.value = '';
+            
+            const results = window.allMedicamentos.filter(med => 
+                med.isFavorite
+            );
+            displayResults(results);
+        };
+
+        window.searchMedicamentos = (term) => {
+            const searchTerm = term.toLowerCase().trim();
+            
+            // Salvar no histórico (apenas termos relevantes)
+            if (searchTerm && searchTerm.length > 2 && !searchHistory.includes(searchTerm)) {
+                searchHistory.unshift(searchTerm);
+                searchHistory = searchHistory.slice(0, 10); // Limitar a 10 itens
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(searchHistory));
+            }
+            
+            const results = window.allMedicamentos.filter(med => 
+                med.nome.toLowerCase().includes(searchTerm) ||
+                med.principioAtivo.toLowerCase().includes(searchTerm) ||
+                med.categoria?.toLowerCase().includes(searchTerm) ||
+                med.indicacoes?.toLowerCase().includes(searchTerm)
+            );
+            displayResults(results);
+        };
+
+        const displayResults = (results) => {
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = results.length ? '' : `
+                <div class="col-span-full text-center py-12">
+                    <div class="text-gray-300 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 font-bold">Medicamento não encontrado na base de dados.</p>
+                    <p class="text-gray-400 text-sm mt-2">Tente outro termo ou selecione uma categoria acima.</p>
+                </div>
+            `;
+            
+            results.forEach((med) => {
+                const color = getCategoryColor(med.categoria);
+                const item = document.createElement('div');
+                item.className = 'card-med p-4 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md cursor-pointer flex flex-col justify-between';
+                item.onclick = () => showBulaDetails(med);
+                item.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="category-tag" style="background-color: ${color}20; color: ${color}">${med.categoria || 'Geral'}</span>
+                            <button onclick="toggleFavorite('${med.nome}', event)" class="text-gray-300 hover:text-yellow-500 transition-colors">
+                                <svg class="w-4 h-4" fill="${med.isFavorite ? '#f59e0b' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <h3 class="text-md font-bold text-gray-800 leading-tight mt-1">${med.nome}</h3>
+                        <p class="text-[11px] text-gray-400 mt-1 line-clamp-1 italic">${med.principioAtivo}</p>
+                        ${med.indicacoes ? `<p class="text-[10px] text-gray-500 mt-2 line-clamp-2">${med.indicacoes.substring(0, 80)}...</p>` : ''}
+                    </div>
+                    <div class="mt-4 flex justify-between items-center border-t pt-3">
+                        <span class="text-[10px] font-medium text-gray-400">${med.dosagem}</span>
+                        <span class="text-indigo-600 font-bold text-xs">Ver bula &rarr;</span>
+                    </div>
+                `;
+                resultsDiv.appendChild(item);
+            });
+        };
+
+        const getCategoryColor = (cat) => {
+            const colors = { 
+                'Antibiótico': '#ef4444', 
+                'Analgésico': '#3b82f6', 
+                'Corticosteroide': '#f59e0b', 
+                'Anti-histamínico': '#8b5cf6', 
+                'Expectorante': '#10b981', 
+                'Antiparasitário': '#6366f1', 
+                'Descongestionante': '#06b6d4', 
+                'Antiespasmódico': '#ec4899', 
+                'Antiemético': '#f43f5e',
+                'Gastrocinético': '#8b5cf6',
+                'Antigases': '#06b6d4',
+                'Antitussígeno': '#10b981',
+                'Fitoterápico': '#22c55e',
+                'Anti-hipertensivo': '#dc2626',
+                'Diurético': '#0891b2',
+                'Antidiabético': '#7c3aed',
+                'Ansiolítico': '#db2777',
+                'Antidepressivo': '#0d9488',
+                'Contraceptivo': '#be185d',
+                'Hormônio Tireoidiano': '#f59e0b',
+                'Antifúngico': '#65a30d',
+                'Vitamina': '#ea580c',
+                'Suplemento': '#ca8a04',
+                'Antiagregante Plaquetário': '#dc2626'
+            };
+            return colors[cat] || '#64748b';
+        };
+
+        window.toggleFavorite = (medName, event) => {
+            event.stopPropagation();
+            const med = window.allMedicamentos.find(m => m.nome === medName);
+            med.isFavorite = !med.isFavorite;
+            
+            // Atualizar lista de favoritos
+            if (med.isFavorite && !favorites.includes(medName)) {
+                favorites.push(medName);
+            } else if (!med.isFavorite && favorites.includes(medName)) {
+                favorites = favorites.filter(f => f !== medName);
+            }
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+            
+            // Atualizar display
+            const star = event.target.closest('button').querySelector('svg');
+            star.style.fill = med.isFavorite ? '#f59e0b' : 'none';
+            
+            // Atualizar tooltip
+            event.target.closest('button').title = med.isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+        };
+
+        window.showBulaDetails = (med) => {
+            const modal = document.getElementById('bula-modal');
+            const content = document.getElementById('bula-content');
+            
+            // Determinar se mostrará calculadora ou informações adicionais
+            const hasCalculator = med.tipoCalculo || (med.pesoBaseCalculo && med.pesoBaseCalculo.concentracaoMgPerMl);
+            
+            content.innerHTML = `
+                <div class="mb-6 text-left">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="category-tag" style="background-color: ${getCategoryColor(med.categoria)}20; color: ${getCategoryColor(med.categoria)}">
+                                ${med.categoria || 'Medicamento'}
+                            </span>
+                            <h2 class="text-2xl font-black text-gray-900 mt-2 leading-tight">${med.nome}</h2>
+                            <p class="text-gray-500 font-medium text-sm">${med.principioAtivo} | ${med.dosagem}</p>
+                        </div>
+                        <button onclick="toggleFavorite('${med.nome}', event)" class="text-gray-300 hover:text-yellow-500 transition-colors p-2" title="${med.isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">
+                            <svg class="w-6 h-6" fill="${med.isFavorite ? '#f59e0b' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    ${med.apresentacao ? `
+                        <div class="mt-3 flex items-center gap-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="font-medium">${med.apresentacao}</span>
+                        </div>
+                    ` : ''}
+                </div>
+
+                ${hasCalculator ? `<div id="dose-calculator-container"></div>` : ''}
+
+                <!-- SECÇÃO DE INFORMAÇÕES EXPANDIDAS -->
+                <div class="mt-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        <!-- COLUNA 1 -->
+                        <div>
+                            <!-- Indicações -->
+                            <div class="mb-4 bg-blue-50 p-5 rounded-2xl border border-blue-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-blue-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Indicações Terapêuticas
+                                </h3>
+                                <p class="text-sm text-blue-900 leading-relaxed">${med.indicacoes || 'Consultar bula oficial para indicações detalhadas.'}</p>
+                            </div>
+
+                            <!-- Posologia Detalhada -->
+                            ${med.posologiaDetalhada ? `
+                            <div class="mb-4 bg-green-50 p-5 rounded-2xl border border-green-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-green-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Posologia Detalhada
+                                </h3>
+                                <p class="text-sm text-green-900 leading-relaxed">${med.posologiaDetalhada}</p>
+                                ${med.posologia ? `<p class="text-sm text-green-700 font-bold mt-2">${med.posologia}</p>` : ''}
+                            </div>
+                            ` : ''}
+
+                            <!-- Conservação -->
+                            ${med.conservacao ? `
+                            <div class="mb-4 bg-purple-50 p-5 rounded-2xl border border-purple-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-purple-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"/>
+                                    </svg>
+                                    Conservação
+                                </h3>
+                                <p class="text-sm text-purple-900 leading-relaxed">${med.conservacao}</p>
+                            </div>
+                            ` : ''}
+
+                            <!-- Mecanismo de Ação -->
+                            ${med.mecanismoAcao ? `
+                            <div class="mb-4 bg-cyan-50 p-5 rounded-2xl border border-cyan-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-cyan-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Mecanismo de Ação
+                                </h3>
+                                <p class="text-sm text-cyan-900 leading-relaxed">${med.mecanismoAcao}</p>
+                            </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- COLUNA 2 -->
+                        <div>
+                            <!-- Contraindicações -->
+                            ${med.contraIndicacoes ? `
+                            <div class="mb-4 bg-red-50 p-5 rounded-2xl border border-red-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-red-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Contraindicações
+                                </h3>
+                                <p class="text-sm text-red-900 leading-relaxed">${med.contraIndicacoes}</p>
+                            </div>
+                            ` : ''}
+
+                            <!-- Reações Adversas -->
+                            <div class="mb-4 bg-amber-50 p-5 rounded-2xl border border-amber-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-amber-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Reações Adversas
+                                </h3>
+                                <p class="text-sm text-amber-900 leading-relaxed">${med.reacoesAdversas || 'Monitorar reações e contraindicações conforme bula. Em caso de reações adversas graves, suspender o medicamento e procurar atendimento médico.'}</p>
+                            </div>
+
+                            <!-- Precauções -->
+                            ${med.precaucoes ? `
+                            <div class="mb-4 bg-indigo-50 p-5 rounded-2xl border border-indigo-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-indigo-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Precauções e Advertências
+                                </h3>
+                                <p class="text-sm text-indigo-900 leading-relaxed">${med.precaucoes}</p>
+                            </div>
+                            ` : ''}
+
+                            <!-- Interações Medicamentosas -->
+                            ${med.interacoesMedicamentosas ? `
+                            <div class="mb-4 bg-pink-50 p-5 rounded-2xl border border-pink-100 shadow-sm">
+                                <h3 class="font-bold text-sm text-pink-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Interações Medicamentosas
+                                </h3>
+                                <p class="text-sm text-pink-900 leading-relaxed">${med.interacoesMedicamentosas}</p>
+                            </div>
+                            ` : ''}
+
+                            <!-- Uso Específico -->
+                            ${med.usoEspecifico ? `
+                            <div class="mb-4 bg-gray-50 p-5 rounded-2xl border border-gray-200 shadow-sm">
+                                <h3 class="font-bold text-sm text-gray-800 mb-3 flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Informações de Uso
+                                </h3>
+                                <p class="text-sm text-gray-900 leading-relaxed">${med.usoEspecifico}</p>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- LINHA DE BAIXO - INFORMAÇÕES ADICIONAIS -->
+                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Farmacocinética -->
+                        ${med.farmacocinética ? `
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
+                            <h3 class="font-bold text-xs text-blue-700 mb-2 uppercase tracking-wider flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                Farmacocinética
+                            </h3>
+                            <p class="text-xs text-blue-800">${med.farmacocinética}</p>
+                        </div>
+                        ` : ''}
+
+                        <!-- Superdosagem -->
+                        ${med.superdosagem ? `
+                        <div class="bg-gradient-to-br from-red-50 to-orange-50 p-4 rounded-xl border border-red-200">
+                            <h3 class="font-bold text-xs text-red-700 mb-2 uppercase tracking-wider flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Superdosagem
+                            </h3>
+                            <p class="text-xs text-red-800">${med.superdosagem}</p>
+                        </div>
+                        ` : ''}
+
+                        <!-- Link para Bula Completa -->
+                        ${med.bulaCompleta ? `
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
+                            <h3 class="font-bold text-xs text-green-700 mb-2 uppercase tracking-wider flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                                Bula Completa
+                            </h3>
+                            <a href="${med.bulaCompleta}" target="_blank" 
+                               class="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-800 font-bold transition-colors">
+                                Acessar Bula Oficial (PDF)
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                            </a>
+                        </div>
+                        ` : `
+                        <div class="bg-gradient-to-br from-gray-50 to-slate-50 p-4 rounded-xl border border-gray-200">
+                            <h3 class="font-bold text-xs text-gray-700 mb-2 uppercase tracking-wider">
+                                Informação Regulatória
+                            </h3>
+                            <p class="text-xs text-gray-600">Consulte sempre a bula física ou digital fornecida pelo fabricante.</p>
+                        </div>
+                        `}
+                    </div>
+
+                    <!-- AVISO IMPORTANTE -->
+                    <div class="mt-8 bg-gradient-to-r from-yellow-50 to-orange-50 p-5 rounded-2xl border border-yellow-200 shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-yellow-100 p-3 rounded-xl shadow-inner">
+                                <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div class="text-left flex-1">
+                                <h4 class="font-bold text-sm text-yellow-800 mb-2">⚠️ Aviso Importante para Profissionais de Saúde</h4>
+                                <p class="text-xs text-yellow-700 leading-relaxed">
+                                    Esta calculadora fornece informações baseadas em doses pediátricas padrão e bulas oficiais. 
+                                    <span class="font-bold">Sempre consulte um médico ou farmacêutico antes da administração.</span> 
+                                    As doses podem variar conforme condição clínica, função renal/hepática, interações medicamentosas e outros fatores individuais. 
+                                    Este sistema é uma ferramenta de apoio e não substitui a avaliação clínica profissional.
+                                </p>
+                                <div class="mt-3 text-[10px] text-yellow-600 font-medium">
+                                    <p>📞 Em caso de dúvidas ou emergências: Contate o Centro de Informação Antiveneno (CIAV) ou serviço médico de urgência.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (hasCalculator) {
+                setupCalculator(med, false); 
+            }
+            modal.classList.remove('hidden');
+        };
+
+        const setupCalculator = (med, forceWeightFill = false) => {
+            const container = document.getElementById('dose-calculator-container');
+            const p = med.pesoBaseCalculo;
+            if(!p) {
+                container.innerHTML = `
+                    <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 text-left shadow-sm">
+                        <h3 class="text-indigo-800 font-black mb-3 text-xs uppercase tracking-widest">Posologia Recomendada</h3>
+                        <p class="text-gray-700 font-bold text-xl leading-snug">${med.posologia || 'A dose deve ser definida conforme prescrição médica.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let selectionHtml = "";
+            if (p.temIntensidade) {
+                selectionHtml = `<div class="mb-4 text-left"><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Opção de Dosagem</label><div class="grid grid-cols-1 sm:grid-cols-3 gap-2">${p.intensidades.map(int => `<button onclick="changeIntensity('${med.nome}', ${int.valor})" class="intensity-btn px-4 py-3 text-xs border rounded-xl transition-all font-semibold text-center ${p.currentIntensidade === int.valor ? 'active' : 'bg-white text-gray-600 border-gray-200'}">${int.label}<br><span class="opacity-70 font-normal">${int.obs}</span></button>`).join('')}</div></div>`;
+            } else if (p.doseMgPerKgPerDiaMin && p.doseMgPerKgPerDiaMin !== p.doseMgPerKgPerDiaMax) {
+                selectionHtml = `<div class="mb-4 text-left"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Dose Alvo (mg/kg/dia): <span id="dose-val" class="font-bold text-indigo-600">${p.defaultDose}</span></label><input type="range" id="dose-slider" min="${p.doseMgPerKgPerDiaMin}" max="${p.doseMgPerKgPerDiaMax}" value="${p.defaultDose}" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" oninput="runCalculation('${med.nome}')"></div>`;
+            }
+
+            container.innerHTML = `
+                <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 shadow-inner text-left">
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Peso do Paciente (kg)</label>
+                            <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter">${p.infoDoseRef || ''}</span>
+                        </div>
+                        <input type="number" id="peso-input" step="0.1" placeholder="Digite o peso..." class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-indigo-500 outline-none text-2xl font-black shadow-sm transition-all" oninput="runCalculation('${med.nome}')">
+                    </div>
+                    ${selectionHtml}
+                    <div id="result-area" class="grid grid-cols-2 gap-3 mb-4">
+                        <div id="result-box" class="bg-indigo-600 text-white p-5 rounded-2xl text-center shadow-lg"><p class="text-[10px] uppercase font-bold opacity-80 tracking-widest mb-1">Dose Única</p><p id="result-dose" class="text-2xl font-black leading-none">---</p></div>
+                        <div id="daily-box" class="bg-indigo-900 text-white p-5 rounded-2xl text-center shadow-lg"><p class="text-[10px] uppercase font-bold opacity-80 tracking-widest mb-1">Total Diário</p><p id="result-daily" class="text-2xl font-black leading-none">---</p></div>
+                    </div>
+                    <div class="mb-4 freq-highlight p-5 rounded-2xl flex items-center gap-4 shadow-sm text-left">
+                        <div class="bg-green-500 p-2.5 rounded-xl text-white shadow-md">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-green-700 tracking-widest mb-0.5">Frequência e Horários</p>
+                            <p id="freq-text-display" class="text-lg font-black text-green-900 leading-tight">${p.freqTexto}</p>
+                        </div>
+                    </div>
+                    <div id="warning-area">
+                        <p id="warning-text" class="text-xs font-bold text-orange-600 mb-2 hidden text-left bg-orange-50 p-2 rounded-lg border border-orange-100 uppercase tracking-tighter text-center font-bold">⚠️ Atenção: Dose máxima recomendada atingida!</p>
+                    </div>
+                </div>
+            `;
+            if(forceWeightFill && window.lastWeight) { document.getElementById('peso-input').value = window.lastWeight; runCalculation(med.nome); }
+        };
+
+        window.runCalculation = (medNome) => {
+            const med = window.allMedicamentos.find(m => m.nome === medNome);
+            const peso = parseFloat(document.getElementById('peso-input').value);
+            window.lastWeight = peso;
+            const p = med.pesoBaseCalculo;
+            
+            const doseEl = document.getElementById('result-dose');
+            const dailyEl = document.getElementById('result-daily');
+            const warningEl = document.getElementById('warning-text');
+            const resultBox = document.getElementById('result-box');
+
+            if (!peso || peso <= 0) {
+                doseEl.innerText = "---"; dailyEl.innerText = "---"; return;
+            }
+
+            let dUnica = "---"; let dTotal = "---"; let warn = false;
+            const formatValue = (val, unit) => `(${Number(val.toFixed(2)).toString().replace('.', ',')} ${unit})`;
+
+            if (med.tipoCalculo === "tabelaDecongexGotas") {
+                let total = Math.min(peso * 2, 60);
+                dUnica = formatValue(Math.round(total/3), "Gotas"); dTotal = formatValue(total, "Gotas");
+                if(total >= 60) warn = true;
+            }
+            else if (med.tipoCalculo === "tabelaDecongex") {
+                if(peso < 12) { dUnica = "N/A"; }
+                else if(peso < 35) { dUnica = formatValue(5, "mL"); dTotal = formatValue(20, "mL"); }
+                else { dUnica = formatValue(15, "mL"); dTotal = formatValue(60, "mL"); }
+            }
+            else if (med.nome.includes("Solução 3 mg/mL")) {
+                let mgKg = p.currentIntensidade; let mgT = Math.min(peso * mgKg, 60);
+                dUnica = formatValue(mgT/3, "mL"); dTotal = formatValue(mgT/3, "mL");
+                if(peso * mgKg >= 60) warn = true;
+            }
+            else if (med.nome.includes("Predsim Gotas 11 mg/mL")) {
+                let mgKg = p.currentIntensidade; let gtt = Math.min(Math.round((peso * mgKg)/0.55), 145);
+                dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(145, "Gotas");
+                if(Math.round((peso*mgKg)/0.55) >= 145) warn = true;
+            }
+            else if (med.tipoCalculo === "tabelaBuscopanComposto") {
+                let gtt = peso < 10 ? 0 : Math.min(Math.round(peso * 0.5), 40);
+                dUnica = gtt > 0 ? formatValue(gtt, "Gotas") : "N/A"; dTotal = gtt > 0 ? formatValue(gtt * 3, "Gotas") : "---";
+            }
+            else if (med.tipoCalculo === "tabelaBuscopan") {
+                let gtt = 0;
+                if(peso < 6) gtt = Math.round(peso*3); else if(peso < 10) gtt = Math.round(peso*1.4); else gtt = Math.min(Math.round(peso), 40);
+                dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(gtt * 3, "Gotas");
+            }
+            else if (med.tipoCalculo === "tabelaDipirona") {
+                let g = peso < 5 ? 0 : (peso <= 8 ? 5 : (peso <= 15 ? 10 : (peso <= 23 ? 15 : (peso <= 30 ? 20 : (peso <= 45 ? 30 : (peso <= 53 ? 35 : 40))))));
+                dUnica = g > 0 ? formatValue(g, "Gotas") : "N/A"; dTotal = g > 0 ? formatValue(g*4, "Gotas") : "---";
+            }
+            else if (med.tipoCalculo === "intensidade" || med.tipoCalculo === "faixa") {
+                let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
+                let mgTotal = peso * mgKg;
+                let unit = p.unidade || "mL";
+                let valUnico = (mgTotal / (p.freqDosesPorDia || 1)) / p.concentracaoMgPerMl;
+                
+                if(unit === "Gotas") valUnico = Math.round((mgTotal / p.freqDosesPorDia) / (p.concentracaoMgPerMl/20));
+                
+                dUnica = formatValue(valUnico, unit);
+                dTotal = formatValue(valUnico * (p.freqDosesPorDia || 1), unit);
+                if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
+            }
+
+            doseEl.innerText = dUnica; dailyEl.innerText = dTotal;
+            if(warn) { warningEl.classList.remove('hidden'); resultBox.classList.replace('bg-indigo-600', 'bg-orange-500'); }
+            else { warningEl.classList.add('hidden'); resultBox.classList.replace('bg-orange-500', 'bg-indigo-600'); }
+        };
+
+        window.changeIntensity = (nome, valor) => {
+            const med = window.allMedicamentos.find(m => m.nome === nome);
+            med.pesoBaseCalculo.currentIntensidade = valor;
+            setupCalculator(med, true);
+        };
+
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+        
+        // Inicializar a aplicação quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</head>
+<body class="min-h-screen pb-12 text-center">
+    <div id="loading-overlay" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-indigo-500"></div>
+        <p class="mt-4 text-indigo-600 font-bold animate-pulse uppercase tracking-widest">Souza Farma</p>
+    </div>
+
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <header class="mb-10">
+            <div class="logo-container">
+                <img src="souza_farma_logo.png" alt="Souza Farma" class="w-full h-auto" onerror="this.src='https://placehold.co/300x100/ef4444/ffffff?text=SOUZA+FARMA'">
+                <!-- Nome da farmácia abaixo da logo -->
+                <div class="mt-3">
+                    <h2 class="text-2xl font-black text-red-600">SOUZA FARMA</h2>
+                    <p class="text-lg font-bold text-red-500">Farmácia do Trabalhador</p>
+                </div>
+            </div>
+            <h1 class="text-4xl font-black text-gray-800 mt-4 tracking-tighter">Sistema de Bulas & Calculadora</h1>
+            <p class="text-gray-500 text-xs mt-1 uppercase tracking-[0.3em] font-black">Sistema Profissional de Dispensação v5.2</p>
+            <p class="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">Sistema completo com informações farmacêuticas detalhadas, calculadora de doses pediátricas e bulas expandidas para apoio à dispensação.</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto mb-6">
+            <div class="relative group text-left">
+                <input type="text" id="search-input" placeholder="Qual medicamento procura? Ex: Amoxicilina, Paracetamol..." 
+                    oninput="searchMedicamentos(this.value)" 
+                    class="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-100 rounded-3xl shadow-xl focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-500 outline-none transition-all text-lg font-bold">
+                <div class="absolute left-5 top-5 text-gray-300 group-focus-within:text-indigo-500 transition-colors">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros por Categoria -->
+        <div id="category-filters" class="flex flex-wrap gap-2 justify-center mb-10"></div>
+
+        <!-- Resultados da Pesquisa -->
+        <div id="search-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+
+        <!-- Informações do Sistema -->
+        <div class="mt-16 pt-8 border-t border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <div class="bg-gray-50 p-5 rounded-2xl">
+                    <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                        </svg>
+                        Sobre o Sistema
+                    </h3>
+                    <p class="text-sm text-gray-600">Sistema profissional para farmácias com informações farmacêuticas detalhadas, cálculo de doses pediátricas e bulas completas.</p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-2xl">
+                    <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Funcionalidades
+                    </h3>
+                    <p class="text-sm text-gray-600">• Cálculo de doses pediátricas<br>• Bulas completas expandidas<br>• Filtros por categoria<br>• Sistema de favoritos<br>• Informações técnicas detalhadas</p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-2xl">
+                    <h3 class="font-bold text-gray-800 mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        Aviso Legal
+                    </h3>
+                    <p class="text-sm text-gray-600">Este sistema é uma ferramenta de apoio à dispensação. Sempre consulte um profissional de saúde para prescrições. Doses podem variar conforme condição clínica.</p>
+                </div>
+            </div>
+            <p class="text-center text-gray-400 text-xs mt-8">Souza Farma - Farmácia do Trabalhador © 2024 - Sistema de Gestão Farmacêutica v5.2</p>
+        </div>
+    </div>
+
+    <!-- Modal de Bula -->
+    <div id="bula-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-[2.5rem] p-6 md:p-10 w-full max-w-4xl max-h-[92vh] overflow-y-auto relative shadow-2xl border border-white text-center">
+            <button onclick="closeModal('bula-modal')" class="close-button absolute top-8 right-8 text-4xl text-gray-300 hover:text-red-500 transition-colors">&times;</button>
+            <div id="bula-content" class="pb-6"></div>
+        </div>
+    </div>
+</body>
+</html>
