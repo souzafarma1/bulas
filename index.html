@@ -102,6 +102,7 @@
                 reacoesAdversas: "Tomar no início das refeições para reduzir GI. Diarreia em 10% dos casos.",
                 contraIndicacoes: "Hipersensibilidade, hepatite prévia.",
                 posologia: "1 comprimido a cada 12 horas por 7-14 dias.",
+                posologiaDetalhada: "Adultos: 1 comprimido (875/125mg) a cada 12 horas. Duração: 7-14 dias conforme gravidade da infecção. Em insuficiência renal (clearance <30mL/min): 1 comprimido a cada 24 horas.",
                 apresentacao: "Comprimidos revestidos, caixa com 14 comprimidos.",
                 conservacao: "Armazenar em temperatura ambiente (15-30°C), protegido da luz e umidade.",
                 interacoesMedicamentosas: "Anticoagulantes orais (aumenta risco de sangramento), metotrexato (aumenta toxicidade), anticoncepcionais orais (pode reduzir eficácia).",
@@ -169,6 +170,7 @@
                 indicacoes: "Gastroenterites e verminoses em adultos e crianças >12 anos.",
                 reacoesAdversas: "Tomar com alimentos. Cefaleia, tontura.",
                 posologia: "1 comprimido 12/12h por 3 dias.",
+                posologiaDetalhada: "Adultos e crianças acima de 12 anos: 1 comprimido (500mg) a cada 12 horas por 3 dias. Administrar com alimentos para melhor absorção.",
                 apresentacao: "Comprimidos revestidos, caixa com 6 comprimidos.",
                 isFavorite: favorites.includes("Annita Comprimido 500mg"),
             },
@@ -177,14 +179,22 @@
                 principioAtivo: "Ivermectina", 
                 dosagem: "6 mg", 
                 categoria: "Antiparasitário", 
-                indicacoes: "Sarna (escabiose), piolho (pediculose), estrongiloidíase.",
-                reacoesAdversas: "Prurido temporário por morte dos parasitas. Tontura, diarreia.",
+                indicacoes: "Sarna (escabiose), piolho (pediculose), estrongiloidíase, oncocercose.",
+                reacoesAdversas: "Prurido temporário por morte dos parasitas. Tontura, diarreia, reações cutâneas.",
                 mecanismoAcao: "Ativa canais de cloreto dependentes de glutamato, causando paralisia e morte do parasita.",
-                contraIndicacoes: "Crianças <15kg ou <5 anos. Gestantes.",
-                usoEspecifico: "Dose única. Repetir após 7-14 dias para sarna.",
+                contraIndicacoes: "Crianças <15kg ou <5 anos. Gestantes e lactantes.",
+                posologia: "200mcg/kg em dose única. Repetir após 7-14 dias para sarna.",
+                posologiaDetalhada: "Para escabiose: dose única de 200mcg/kg (0,2mg/kg). Repetir após 7-14 dias se necessário. Para estrongiloidíase: dose única. Seguir tabela posológica conforme peso do paciente.",
+                usoEspecifico: "Tomar em jejum com água. Para escabiose: aplicar tratamento tópico simultaneamente.",
                 isFavorite: favorites.includes("Ivermectina 6mg"),
-                tipoCalculo: "faixa", 
-                pesoBaseCalculo: { infoDoseRef: "(0,2 mg/kg única)", doseMgPerKgPerDiaMin: 0.2, doseMgPerKgPerDiaMax: 0.2, defaultDose: 0.2, freqDosesPorDia: 1, concentracaoMgPerMl: 6, freqTexto: "Dose única." } 
+                tipoCalculo: "ivermectina", 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(200 mcg/kg - Dose única)", 
+                    doseMgPerKg: 0.2, 
+                    dosePorComprimido: 6,
+                    freqDosesPorDia: 1, 
+                    freqTexto: "Dose única. Para escabiose: repetir após 7-14 dias." 
+                } 
             },
             { 
                 nome: "Albendazol 400mg", 
@@ -194,6 +204,7 @@
                 indicacoes: "Verminoses comuns: ascaridíase, ancilostomíase, enterobíase, tricuríase.",
                 reacoesAdversas: "Dor abdominal, diarreia, tontura. Raramente: alterações hepáticas.",
                 posologia: "Dose única de 400mg. Repetir após 15 dias para alguns parasitas.",
+                posologiaDetalhada: "Adultos e crianças acima de 2 anos: Dose única de 400mg (1 comprimido). Para alguns parasitas como Strongyloides, administrar por 3 dias consecutivos. Para crianças de 1-2 anos: 200mg (½ comprimido). Administrar com alimentos gordurosos para aumentar absorção.",
                 apresentacao: "Comprimido mastigável.",
                 mecanismoAcao: "Inibe captação de glucose pelos parasitas, esgotando suas reservas de glicogênio.",
                 isFavorite: favorites.includes("Albendazol 400mg"),
@@ -222,6 +233,7 @@
                 indicacoes: "Tosse com catarro em adultos, DPOC, bronquite crônica.",
                 reacoesAdversas: "Cefaleia, irritação gástrica. Administrar após refeições.",
                 posologia: "10mL de 12 em 12 horas.",
+                posologiaDetalhada: "Adultos: 10mL (100mg) 2 vezes ao dia (12/12h). Crianças acima de 12 anos: 5mL (50mg) 2 vezes ao dia.",
                 apresentacao: "Frasco 120mL.",
                 isFavorite: favorites.includes("Acebrofilina Xarope 50mg/5mL"),
             },
@@ -247,6 +259,7 @@
                 indicacoes: "Expectorante adulto para secreções espessas. Também usado como antídoto em intoxicação por paracetamol.",
                 reacoesAdversas: "Odor sulfuroso característico. Náuseas, estomatite.",
                 posologia: "15mL (1 copo) 1 vez ao dia à noite.",
+                posologiaDetalhada: "Adultos: 15mL (600mg) 1 vez ao dia, preferencialmente à noite. Para secreções muito espessas: 10mL (400mg) 2 vezes ao dia. Como antídoto para paracetamol: dose de carga de 140mg/kg, seguido de 70mg/kg a cada 4 horas por 17 doses.",
                 apresentacao: "Frasco 200mL.",
                 isFavorite: favorites.includes("Acetilcisteína Xarope 40mg/mL"),
             },
@@ -272,19 +285,205 @@
                 indicacoes: "Tosse seca adulto, especialmente noturna que interfere no sono.",
                 reacoesAdversas: "Sonolência marcante. Evitar dirigir ou operar máquinas.",
                 posologia: "10mL até 4 vezes ao dia.",
+                posologiaDetalhada: "Adultos: 10-20mL (30-60mg) 3-4 vezes ao dia. Dose máxima diária: 80mL (240mg). Crianças acima de 12 anos: 5-10mL (15-30mg) 3 vezes ao dia.",
                 isFavorite: favorites.includes("Dropropizina 3mg/mL Xarope"),
             },
             { 
                 nome: "Abrilar (Hedera helix)", 
-                principioAtivo: "Fitoterápico", 
+                principioAtivo: "Extrato de Hedera helix", 
                 dosagem: "7 mg/mL", 
                 categoria: "Expectorante", 
                 indicacoes: "Tosse produtiva em resfriados, bronquite aguda. Ação mucolítica e expectorante.",
                 reacoesAdversas: "Bem tolerado. Raramente: reações alérgicas, distúrbios gastrointestinais.",
                 posologia: "2,5 a 7,5mL 3x ao dia conforme idade.",
+                posologiaDetalhada: "Crianças 2-5 anos: 2,5mL 3 vezes ao dia. Crianças 6-12 anos: 5mL 3 vezes ao dia. Adultos e crianças acima de 12 anos: 7,5mL 3 vezes ao dia. Administrar sem diluir, pode ser misturado com água ou suco.",
                 apresentacao: "Xarope 100mL e 200mL.",
                 usoEspecifico: "Pode ser usado em gestantes após 1º trimestre (categoria B).",
                 isFavorite: favorites.includes("Abrilar (Hedera helix)"),
+            },
+
+            // --- NOVOS MEDICAMENTOS ADICIONADOS ---
+            
+            // --- NOVOS ANTIBIÓTICOS COMPRIMIDOS/CÁPSULAS ---
+            { 
+                nome: "Amoxicilina 500mg Cápsula", 
+                principioAtivo: "Amoxicilina", 
+                dosagem: "500mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções bacterianas: respiratórias, urinárias, de pele. Ativo contra bactérias gram-positivas e algumas gram-negativas.",
+                reacoesAdversas: "Diarreia, náuseas, erupções cutâneas. Em mononucleose: risco de exantema.",
+                contraIndicacoes: "Hipersensibilidade a penicilinas, mononucleose infecciosa.",
+                posologia: "250-500mg a cada 8 horas.",
+                posologiaDetalhada: "Adultos: 250-500mg a cada 8 horas. Crianças: 20-50mg/kg/dia divididos em 3 doses. Em infecções graves: até 1g a cada 8 horas. Duração: 7-14 dias.",
+                apresentacao: "Cápsulas 500mg, caixa com 21 cápsulas.",
+                conservacao: "Armazenar em temperatura ambiente, protegido da umidade.",
+                isFavorite: favorites.includes("Amoxicilina 500mg Cápsula"),
+            },
+            { 
+                nome: "Amoxicilina 875mg Comprimido", 
+                principioAtivo: "Amoxicilina", 
+                dosagem: "875mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções bacterianas moderadas a graves: pneumonia, sinusite, pielonefrite.",
+                reacoesAdversas: "Distúrbios gastrointestinais, candidíase, reações alérgicas.",
+                contraIndicacoes: "Hipersensibilidade a penicilinas.",
+                posologia: "875mg a cada 12 horas.",
+                posologiaDetalhada: "Adultos: 875mg a cada 12 horas. Em insuficiência renal (clearance 10-30mL/min): 500mg a cada 12 horas. Clearance <10mL/min: 500mg a cada 24 horas. Tomar com alimentos para reduzir efeitos GI.",
+                apresentacao: "Comprimidos revestidos 875mg, caixa com 14 comprimidos.",
+                isFavorite: favorites.includes("Amoxicilina 875mg Comprimido"),
+            },
+            { 
+                nome: "Cefalexina 500mg Comprimido", 
+                principioAtivo: "Cefalexina", 
+                dosagem: "500mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções por bactérias gram-positivas: pele, ossos, trato respiratório e urinário.",
+                reacoesAdversas: "Diarreia, náuseas, vaginite. Raramente: colite pseudomembranosa.",
+                contraIndicacoes: "Hipersensibilidade a cefalosporinas (cuidado em alérgicos a penicilina).",
+                posologia: "250-500mg a cada 6 horas.",
+                posologiaDetalhada: "Adultos: 250-500mg a cada 6 horas. Infecções graves: até 1g a cada 6 horas. Crianças: 25-50mg/kg/dia divididos em 4 doses. Duração: 7-14 dias.",
+                apresentacao: "Comprimidos 500mg, caixa com 16 comprimidos.",
+                isFavorite: favorites.includes("Cefalexina 500mg Comprimido"),
+            },
+            { 
+                nome: "Metronidazol 400mg Comprimido", 
+                principioAtivo: "Metronidazol", 
+                dosagem: "400mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções por anaeróbios, amebíase, giardíase, vaginose bacteriana, profilaxia cirúrgica.",
+                reacoesAdversas: "Sabor metálico, náuseas, neuropatia periférica com uso prolongado. EVITAR ÁLCOOL (reação tipo dissulfiram).",
+                contraIndicacoes: "Primeiro trimestre de gestação, hipersensibilidade.",
+                posologia: "200-400mg a cada 8 horas.",
+                posologiaDetalhada: "Adultos: 200-400mg a cada 8 horas. Amebíase: 400-800mg a cada 8 horas por 5-10 dias. Giardíase: 2g/dia por 3 dias ou 400mg a cada 8 horas por 5 dias. Vaginose bacteriana: 400mg a cada 12 horas por 7 dias.",
+                apresentacao: "Comprimidos 400mg, caixa com 14 comprimidos.",
+                isFavorite: favorites.includes("Metronidazol 400mg Comprimido"),
+            },
+            { 
+                nome: "Metronidazol 250mg Comprimido", 
+                principioAtivo: "Metronidazol", 
+                dosagem: "250mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções anaeróbicas, parasitoses intestinais, infecções ginecológicas.",
+                reacoesAdversas: "Distúrbios gastrointestinais, cefaleia, reações alérgicas.",
+                contraIndicacoes: "Hipersensibilidade, primeiro trimestre de gestação.",
+                posologia: "250mg a cada 8 horas.",
+                posologiaDetalhada: "Adultos: 250mg a cada 8 horas. Crianças: 7,5mg/kg a cada 8 horas. Para giardíase em crianças: 15mg/kg/dia divididos em 3 doses por 5 dias. EVITAR CONSUMO DE ÁLCOOL durante tratamento e por 48h após.",
+                apresentacao: "Comprimidos 250mg, caixa com 20 comprimidos.",
+                isFavorite: favorites.includes("Metronidazol 250mg Comprimido"),
+            },
+            { 
+                nome: "Ciprofloxacino 500mg Comprimido", 
+                principioAtivo: "Ciprofloxacino", 
+                dosagem: "500mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções por gram-negativos: urinárias, respiratórias, gastrointestinais, ósseas e articulares.",
+                reacoesAdversas: "Tendinite, ruptura tendínea (especialmente Aquiles), neuropatia periférica, fotossensibilidade, prolongamento do QT.",
+                contraIndicacoes: "Crianças e adolescentes (exceto indicações específicas), gestação, lactação, miastenia gravis.",
+                posologia: "250-500mg a cada 12 horas.",
+                posologiaDetalhada: "Adultos: 250-500mg a cada 12 horas. Infecções urinárias não complicadas: 250mg a cada 12 horas por 3 dias. Infecções graves: até 750mg a cada 12 horas. Tomar com água, evitar antiácidos e suplementos de ferro/cálcio.",
+                apresentacao: "Comprimidos 500mg, caixa com 14 comprimidos.",
+                isFavorite: favorites.includes("Ciprofloxacino 500mg Comprimido"),
+            },
+            { 
+                nome: "Sulfametoxazol + Trimetropima Suspensão (200mg + 40mg)", 
+                principioAtivo: "Sulfametoxazol + Trimetoprima", 
+                dosagem: "200mg+40mg/5mL", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções urinárias, otite média aguda, bronquite aguda, pneumocistose.",
+                reacoesAdversas: "Rash cutâneo, náuseas, anemia megaloblástica (deficiência de folato), hipercalemia.",
+                contraIndicacoes: "Hipersensibilidade a sulfas, deficiência de G6PD, gravidez (terceiro trimestre).",
+                posologia: "8-12 mg/kg/dia (base SMX) divididos em 2 doses.",
+                posologiaDetalhada: "Crianças: 8-12 mg/kg/dia de sulfametoxazol divididos em 2 doses (12/12h). Adultos: 800/160mg (2 comprimidos) a cada 12 horas. Em infecções urinárias não complicadas: dose única de 1600/320mg (4 comprimidos).",
+                apresentacao: "Suspensão oral 100mL.",
+                isFavorite: favorites.includes("Sulfametoxazol + Trimetropima Suspensão (200mg + 40mg)"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(8-12 mg/kg/dia SMX)", 
+                    doseMgPerKgPerDiaMin: 8, 
+                    doseMgPerKgPerDiaMax: 12, 
+                    defaultDose: 10, 
+                    freqDosesPorDia: 2, 
+                    concentracaoMgPerMl: 40, // 200mg/5mL = 40mg/mL de SMX
+                    freqTexto: "12/12h (2 vezes ao dia)." 
+                }
+            },
+            { 
+                nome: "Sulfametoxazol + Trimetoprima (comprimido 400mg + 80mg)", 
+                principioAtivo: "Sulfametoxazol + Trimetoprima", 
+                dosagem: "400mg+80mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções do trato urinário, otite média, bronquite, pneumocistose.",
+                reacoesAdversas: "Reações cutâneas, distúrbios gastrointestinais, hipercalemia, neutropenia.",
+                contraIndicacoes: "Hipersensibilidade a sulfas, deficiência de G6PD, insuficiência renal grave.",
+                posologia: "1-2 comprimidos a cada 12 horas.",
+                posologiaDetalhada: "Adultos: 1-2 comprimidos (400/80mg - 800/160mg) a cada 12 horas. Para infecção urinária não complicada: dose única de 4 comprimidos (1600/320mg). Crianças >12 anos: 1 comprimido a cada 12 horas. Tomar com bastante água.",
+                apresentacao: "Comprimidos, caixa com 20 comprimidos.",
+                isFavorite: favorites.includes("Sulfametoxazol + Trimetoprima (comprimido 400mg + 80mg)"),
+            },
+            { 
+                nome: "Sulfametoxazol + Trimetoprima (comprimido 800mg + 160mg)", 
+                principioAtivo: "Sulfametoxazol + Trimetoprima", 
+                dosagem: "800mg+160mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções graves, pneumocistose, nocardiose, toxoplasmose.",
+                reacoesAdversas: "Reações de hipersensibilidade graves (SJS, TEN), hepatotoxicidade, nefrite intersticial.",
+                contraIndicacoes: "Hipersensibilidade, gravidez (terceiro trimestre), lactação.",
+                posologia: "1 comprimido a cada 12 horas.",
+                posologiaDetalhada: "Adultos: 1 comprimido (800/160mg) a cada 12 horas. Para pneumocistose: 15-20 mg/kg/dia de trimetoprima divididos em 3-4 doses. Em insuficiência renal (clearance 15-30mL/min): reduzir dose para 50%. Clearance <15mL/min: não recomendado.",
+                apresentacao: "Comprimidos, caixa com 10 comprimidos.",
+                isFavorite: favorites.includes("Sulfametoxazol + Trimetoprima (comprimido 800mg + 160mg)"),
+            },
+            { 
+                nome: "Azitromicina 500mg Comprimido", 
+                principioAtivo: "Azitromicina", 
+                dosagem: "500mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções respiratórias, doenças sexualmente transmissíveis, infecções de pele.",
+                reacoesAdversas: "Distúrbios gastrointestinais (principalmente diarreia), hepatotoxicidade, prolongamento do QT.",
+                contraIndicacoes: "Hipersensibilidade a macrolídeos, doença hepática grave.",
+                posologia: "500mg 1x/dia por 3 dias.",
+                posologiaDetalhada: "Adultos: 500mg 1 vez ao dia por 3 dias. Para doença inflamatória pélvica: 500mg 1 vez ao dia por 7-10 dias. Para gonorreia: dose única de 1g. Tomar 1h antes ou 2h após refeições.",
+                apresentacao: "Comprimidos 500mg, caixa com 3 comprimidos.",
+                isFavorite: favorites.includes("Azitromicina 500mg Comprimido"),
+            },
+            { 
+                nome: "Nitrofurantoína 100mg Cápsulas", 
+                principioAtivo: "Nitrofurantoína", 
+                dosagem: "100mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções urinárias baixas não complicadas, profilaxia de ITU recorrente.",
+                reacoesAdversas: "Náuseas, pneumonite aguda/subaguda, neuropatia periférica, hepatotoxicidade.",
+                contraIndicacoes: "Insuficiência renal (clearance <60mL/min), deficiência de G6PD, gestação (próximo ao termo).",
+                posologia: "50-100mg a cada 6 horas.",
+                posologiaDetalhada: "Adultos: 50-100mg a cada 6 horas por 5-7 dias. Para profilaxia: 50-100mg ao deitar. Crianças >1 mês: 5-7 mg/kg/dia divididos em 4 doses. Tomar com alimentos para melhor tolerância.",
+                apresentacao: "Cápsulas 100mg, caixa com 14 cápsulas.",
+                isFavorite: favorites.includes("Nitrofurantoína 100mg Cápsulas"),
+            },
+            { 
+                nome: "Clindamicina 300mg Cápsula", 
+                principioAtivo: "Clindamicina", 
+                dosagem: "300mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Infecções anaeróbicas, infecções por S. aureus resistente, acne, profilaxia cirúrgica.",
+                reacoesAdversas: "Colite pseudomembranosa (até 10%), rash cutâneo, diarreia.",
+                contraIndicacoes: "Hipersensibilidade à clindamicina ou lincomicina.",
+                posologia: "150-300mg a cada 6 horas.",
+                posologiaDetalhada: "Adultos: 150-450mg a cada 6-8 horas. Infecções graves: até 600mg a cada 6 horas. Crianças: 8-20 mg/kg/dia divididos em 3-4 doses. Para acne: 150mg a cada 12 horas.",
+                apresentacao: "Cápsulas 300mg, caixa com 16 cápsulas.",
+                isFavorite: favorites.includes("Clindamicina 300mg Cápsula"),
+            },
+            { 
+                nome: "Doxiciclina 100mg Cápsula", 
+                principioAtivo: "Doxiciclina", 
+                dosagem: "100mg", 
+                categoria: "Antibiótico", 
+                indicacoes: "Acne, infecções por Chlamydia, rickettsioses, malária profilática.",
+                reacoesAdversas: "Fotossensibilidade, esofagite, hiperpigmentação, hepatotoxicidade.",
+                contraIndicacoes: "Gestação, lactação, crianças <8 anos (risco de descoloração dentária).",
+                posologia: "100mg a cada 12 horas no primeiro dia, depois 100mg/dia.",
+                posologiaDetalhada: "Adultos: 100mg a cada 12 horas no primeiro dia, depois 100mg 1 vez ao dia. Para acne: 50-100mg 1 vez ao dia. Para malária profilática: 100mg 1 vez ao dia iniciando 1-2 dias antes da viagem até 4 semanas após retorno. Tomar com bastante água, não deitar por 30 minutos.",
+                apresentacao: "Cápsulas 100mg, caixa com 14 cápsulas.",
+                isFavorite: favorites.includes("Doxiciclina 100mg Cápsula"),
             },
 
             // --- CORTICOIDES ---
@@ -389,9 +588,20 @@
                 indicacoes: "Alergias em geral. Não causa sono significativo. Rinite alérgica, urticária crônica.",
                 reacoesAdversas: "Cefaleia (12%), fadiga (4%), boca seca (3%).",
                 posologia: "Pediatria: 5 a 10mL 1 vez ao dia. Adultos: 10mL/dia.",
+                posologiaDetalhada: "Crianças 2-12 anos (<30kg): 5mL (5mg) 1 vez ao dia. Crianças >30kg: 10mL (10mg) 1 vez ao dia. Adultos e crianças acima de 12 anos: 10mL (10mg) 1 vez ao dia. Pode ser administrado com ou sem alimentos.",
                 apresentacao: "Frasco 100mL.",
                 usoEspecifico: "Pode ser administrado a qualquer hora do dia. Efeito inicia em 1-3h, duração 24h.",
                 isFavorite: favorites.includes("Loratadina Xarope"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(0,1 mg/kg/dia)", 
+                    doseMgPerKgPerDiaMin: 0.1, 
+                    doseMgPerKgPerDiaMax: 0.1, 
+                    defaultDose: 0.1, 
+                    freqDosesPorDia: 1, 
+                    concentracaoMgPerMl: 1, 
+                    freqTexto: "1 vez ao dia." 
+                }
             },
             { 
                 nome: "Desloratadina Xarope", 
@@ -401,6 +611,7 @@
                 indicacoes: "Rinite alérgica e urticária. Metabolito ativo da loratadina, mais potente.",
                 reacoesAdversas: "Poucos efeitos adversos. Fadiga (1-2%), boca seca (2%).",
                 posologia: "Crianças: 2,5 a 5mL 1 vez ao dia. Adultos: 10mL/dia.",
+                posologiaDetalhada: "Crianças 1-5 anos: 2,5mL (1,25mg) 1 vez ao dia. Crianças 6-11 anos: 5mL (2,5mg) 1 vez ao dia. Adultos e crianças acima de 12 anos: 10mL (5mg) 1 vez ao dia.",
                 mecanismoAcao: "Antagonista H1 seletivo. Início em 30min, pico em 3h, duração 24h.",
                 isFavorite: favorites.includes("Desloratadina Xarope"),
             },
@@ -431,6 +642,29 @@
                 isFavorite: favorites.includes("Dipirona 500mg/mL Gotas"),
                 tipoCalculo: "tabelaDipirona", 
                 pesoBaseCalculo: { infoDoseRef: "(8 a 16 mg/kg/dose)", maxDoseDiaria: 160, freqTexto: "Até 4 vezes ao dia (6/6h)." } 
+            },
+            { 
+                nome: "Novalgina Solução Oral 50mg/mL", 
+                principioAtivo: "Dipirona", 
+                dosagem: "50 mg/mL", 
+                categoria: "Analgésico", 
+                indicacoes: "Febre e dor leve a moderada. Alternativa ao paracetamol em casos de alergia ou contraindicação.",
+                reacoesAdversas: "Hipotensão, agranulocitose rara, reações alérgicas.",
+                contraIndicacoes: "Porfiria aguda intermitente, asma induzida por AINEs, alergia a dipirona.",
+                posologia: "20-40 gotas 3-4 vezes ao dia conforme idade.",
+                posologiaDetalhada: "Crianças: 10-15 mg/kg/dose a cada 6-8 horas. Adultos: 500-1000mg (10-20mL) a cada 6-8 horas. Dose máxima diária: 4g.",
+                apresentacao: "Frasco 100mL.",
+                isFavorite: favorites.includes("Novalgina Solução Oral 50mg/mL"),
+                tipoCalculo: "faixa", 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(10-15 mg/kg/dose)", 
+                    doseMgPerKgPerDiaMin: 10, 
+                    doseMgPerKgPerDiaMax: 15, 
+                    defaultDose: 12, 
+                    freqDosesPorDia: 4, 
+                    concentracaoMgPerMl: 50, 
+                    freqTexto: "A cada 6 horas (4 vezes ao dia)." 
+                }
             },
             { 
                 nome: "Ibuprofeno 100mg/mL Gotas", 
@@ -567,6 +801,7 @@
                 reacoesAdversas: "Seguro, sem efeitos sistêmicos. Não é absorvido.",
                 mecanismoAcao: "Agente antiflatulento que reduz tensão superficial das bolhas de gás, facilitando sua eliminação.",
                 posologia: "Lactentes: 3-5 Gotas. Crianças: 5-10 Gotas. Adultos: 10-30 Gotas, após refeições ou conforme necessidade.",
+                posologiaDetalhada: "Recém-nascidos e lactentes: 3-5 gotas (aproximadamente 0,3-0,5mL) após cada mamada. Crianças 1-6 anos: 5-10 gotas (0,5-1mL) 3-4 vezes ao dia. Adultos e crianças acima de 6 anos: 10-20 gotas (1-2mL) 3-4 vezes ao dia, após refeições e ao deitar. Agitar antes de usar.",
                 usoEspecifico: "Pode ser usado em recém-nascidos. Não interage com outros medicamentos.",
                 isFavorite: favorites.includes("Luftal (Simeticona) Gotas"),
             },
@@ -579,13 +814,12 @@
                 reacoesAdversas: "Sonolência intensa, boca seca, visão turva.",
                 mecanismoAcao: "Antagonista H1 com efeitos anticolinérgicos e depressão do labirinto.",
                 posologia: "1 gota por kg de peso por dose. Administrar 30-60 min antes da viagem.",
+                posologiaDetalhada: "Crianças 2-6 anos: 2-5 gotas, 2-3 vezes ao dia. Crianças 6-12 anos: 5-10 gotas, 2-3 vezes ao dia. Adultos: 10-20 gotas, 2-3 vezes ao dia. Para prevenção de cinetose: administrar 30-60 minutos antes da viagem. Dose máxima diária: 40 gotas.",
                 contraIndicacoes: "Glaucoma, asma, hipertrofia prostática.",
                 precaucoes: "Evitar dirigir ou operar máquinas. Efeito dura 4-6 horas.",
                 isFavorite: favorites.includes("Dramin B6 Gotas"),
             },
 
-            // --- NOVOS MEDICAMENTOS ADICIONADOS ---
-            
             // --- ANTI-HIPERTENSIVOS E CARDIOVASCULARES ---
             { 
                 nome: "Captopril 25mg", 
@@ -638,6 +872,7 @@
                 reacoesAdversas: "Sangramento gastrointestinal, úlcera péptica, broncoespasmo em asmáticos.",
                 contraIndicacoes: "Úlcera péptica ativa, hemofilia, alergia a AINEs.",
                 posologia: "100mg 1x/dia.",
+                posologiaDetalhada: "Prevenção secundária de eventos cardiovasculares: 100mg 1 vez ao dia, preferencialmente pela manhã. Para dor ou febre (uso eventual): 500-1000mg a cada 4-6 horas, máximo 4g/dia. IMPORTANTE: Para uso antiagregante, preferir comprimidos entericos para reduzir irritação gástrica.",
                 apresentacao: "Comprimidos revestidos, caixa com 30 comprimidos.",
                 mecanismoAcao: "Inibe irreversivelmente a ciclo-oxigenase plaquetária, impedindo agregação plaquetária.",
                 isFavorite: favorites.includes("AAS 100mg"),
@@ -683,7 +918,7 @@
                 contraIndicacoes: "Miastenia gravis, apneia do sono, insuficiência respiratória grave.",
                 posologiaDetalhada: "5-10mg 2-3x/dia. Uso por curto período (2-4 semanas).",
                 apresentacao: "Comprimidos 10mg, caixa com 20 comprimidos.",
-                mecanismoAcao: "Agonista dos receptores GABA-A, potencializando a inibição neuronal.",
+                mecanismoAcao: "Agonista dos receptores GABA-A, potencializando a inibiação neuronal.",
                 precaucoes: "Risco de dependência e tolerância. Evitar uso prolongado.",
                 isFavorite: favorites.includes("Diazepam 10mg"),
             },
@@ -789,6 +1024,126 @@
                 apresentacao: "Comprimidos revestidos, frasco com 30 comprimidos.",
                 usoEspecifico: "Não exceder a dose recomendada. Manter fora do alcance de crianças.",
                 isFavorite: favorites.includes("Polivitamínico Adulto"),
+            },
+
+            // --- MAGNÉSIO E MINERAIS (ADICIONADOS) ---
+            { 
+                nome: "Cloreto de Magnésio P.A.", 
+                principioAtivo: "Cloreto de Magnésio", 
+                dosagem: "33g (pó para solução)", 
+                categoria: "Mineral", 
+                indicacoes: "Deficiência de magnésio, câimbras musculares, fadiga, osteoporose, constipação intestinal.",
+                reacoesAdversas: "Diarreia (efeito laxativo), desconforto abdominal, náuseas em altas doses.",
+                contraIndicacoes: "Insuficiência renal grave, bloqueio cardíaco, miastenia gravis.",
+                posologiaDetalhada: "Diluir 33g em 1 litro de água. Tomar 50mL (1 copinho) 2x ao dia. Equivale a aproximadamente 667mg de magnésio elementar por dose.",
+                apresentacao: "Frasco com 33g de pó para preparo de solução oral.",
+                conservacao: "Após preparação, conservar em geladeira por até 30 dias.",
+                mecanismoAcao: "O magnésio é cofator para mais de 300 reações enzimáticas, incluindo produção de ATP, síntese proteica e função neuromuscular.",
+                precaucoes: "Pacientes com insuficiência renal devem evitar. Pode interagir com tetraciclinas e bifosfonatos.",
+                usoEspecifico: "Tomar preferencialmente após as refeições. Sabor amargo característico.",
+                isFavorite: favorites.includes("Cloreto de Magnésio P.A."),
+            },
+            { 
+                nome: "Magnésio Dimalato", 
+                principioAtivo: "Magnésio + Ácido Málico", 
+                dosagem: "1250mg (equiv. 150mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Fadiga crônica, fibromialgia, dores musculares, síndrome metabólica, suporte energético.",
+                reacoesAdversas: "Diarreia leve, desconforto gastrointestinal, especialmente em doses elevadas.",
+                contraIndicacoes: "Insuficiência renal grave, hypopotassemia severa.",
+                posologiaDetalhada: "1-2 cápsulas ao dia, com as refeições. Dose máxima: 4 cápsulas/dia (600mg de Mg elementar).",
+                apresentacao: "Cápsulas 1250mg, frasco com 60 cápsulas.",
+                mecanismoAcao: "Combinação sinérgica: magnésio atua na produção de ATP e relaxamento muscular, ácido málico participa do ciclo de Krebs para produção de energia.",
+                usoEspecifico: "Particularmente indicado para pacientes com fibromialgia e fadiga crônica.",
+                isFavorite: favorites.includes("Magnésio Dimalato"),
+            },
+            { 
+                nome: "Magnésio Quelato", 
+                principioAtivo: "Magnésio Bisglicinato", 
+                dosagem: "500mg (equiv. 100mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Deficiência de magnésio com boa tolerabilidade gastrointestinal, ansiedade, insônia, câimbras noturnas.",
+                reacoesAdversas: "Poucos efeitos adversos. Raramente diarreia leve.",
+                contraIndicacoes: "Insuficiência renal grave.",
+                posologiaDetalhada: "1-2 cápsulas 2x ao dia, preferencialmente com as refeições.",
+                apresentacao: "Cápsulas 500mg, frasco com 60 cápsulas.",
+                mecanismoAcao: "Forma quelada com alta biodisponibilidade (80-90%). O magnésio é ligado à glicina para melhor absorção intestinal.",
+                precaucoes: "Excelente opção para pacientes com intolerância gastrointestinal a outras formas de magnésio.",
+                usoEspecifico: "Pode ser tomado à noite para melhorar qualidade do sono e reduzir câimbras noturnas.",
+                isFavorite: favorites.includes("Magnésio Quelato"),
+            },
+            { 
+                nome: "Magnésio L-Treonato", 
+                principioAtivo: "Magnésio L-Treonato", 
+                dosagem: "667mg (equiv. 48mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Função cognitiva, memória, aprendizado, ansiedade, depressão, neuroproteção.",
+                reacoesAdversas: "Leve tontura inicial, cefaleia em alguns pacientes.",
+                contraIndicacoes: "Insuficiência renal grave.",
+                posologiaDetalhada: "2 cápsulas 2x ao dia (total 4 cápsulas/dia), com ou sem alimentos.",
+                apresentacao: "Cápsulas 667mg, frasco com 90 cápsulas.",
+                mecanismoAcao: "Única forma de magnésio que atravessa eficientemente a barreira hematoencefálica. Aumenta a densidade sináptica no cérebro.",
+                usoEspecifico: "Forma especializada para saúde cerebral. Efeitos cognitivos podem levar 6-8 semanas para serem perceptíveis.",
+                isFavorite: favorites.includes("Magnésio L-Treonato"),
+            },
+            { 
+                nome: "Citrato de Magnésio", 
+                principioAtivo: "Citrato de Magnésio", 
+                dosagem: "150mg Mg elementar", 
+                categoria: "Mineral", 
+                indicacoes: "Constipação intestinal, preparo para colonoscopia, deficiência de magnésio, prevenção de cálculos renais.",
+                reacoesAdversas: "Efeito laxativo potente, cólicas abdominais, diarreia aquosa.",
+                contraIndicacoes: "Obstrução intestinal, megacólon, desidratação grave.",
+                posologiaDetalhada: "Para constipação: 150-300mg ao deitar. Para suplementação: 150mg 1-2x ao dia.",
+                apresentacao: "Pó para solução oral, sachês de 10g.",
+                mecanismoAcao: "Atrai água para o intestino por osmose, aumentando o volume fecal e estimulando peristaltismo.",
+                precaucoes: "Não usar por mais de 7 dias consecutivos sem orientação médica. Risco de dependência intestinal.",
+                usoEspecifico: "Muito eficaz para constipação aguda. Para uso crônico como suplemento, preferir doses baixas.",
+                isFavorite: favorites.includes("Citrato de Magnésio"),
+            },
+            { 
+                nome: "Taurato de Magnésio", 
+                principioAtivo: "Magnésio + Taurina", 
+                dosagem: "1250mg (equiv. 125mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Saúde cardiovascular, arritmias, hipertensão, ansiedade, função cognitiva.",
+                reacoesAdversas: "Poucos efeitos adversos. Leve sonolência em doses elevadas.",
+                contraIndicacoes: "Insuficiência renal grave.",
+                posologiaDetalhada: "1-2 cápsulas 2x ao dia, preferencialmente com as refeições.",
+                apresentacao: "Cápsulas 1250mg, frasco com 60 cápsulas.",
+                mecanismoAcao: "Combinação sinérgica: magnésio relaxa vasos sanguíneos, taurina possui efeitos antiarrítmicos e neuroprotetores.",
+                usoEspecifico: "Forma preferida para condições cardiovasculares. A taurina potencializa os efeitos do magnésio no coração.",
+                isFavorite: favorites.includes("Taurato de Magnésio"),
+            },
+            { 
+                nome: "Bisglicinato de Magnésio", 
+                principioAtivo: "Magnésio Bisglicinato", 
+                dosagem: "500mg (equiv. 100mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Deficiência de magnésio com máxima absorção, ansiedade, insônia, TPM, síndrome das pernas inquietas.",
+                reacoesAdversas: "Mínimos efeitos gastrointestinais. Raramente náuseas leves.",
+                contraIndicacoes: "Insuficiência renal grave.",
+                posologiaDetalhada: "1-2 cápsulas 2-3x ao dia, com as refeições. Dose máxima: 6 cápsulas/dia (600mg Mg elementar).",
+                apresentacao: "Cápsulas 500mg, frasco com 120 cápsulas.",
+                mecanismoAcao: "Forma quelada com biodisponibilidade >90%. A glicina atua como neurotransmissor inibitório, potencializando efeitos calmantes.",
+                precaucoes: "Forma mais tolerada para uso prolongado. Excelente para pacientes sensíveis.",
+                usoEspecifico: "Ideal para uso noturno para melhorar qualidade do sono. Pode ser tomado em doses divididas ao longo do dia.",
+                isFavorite: favorites.includes("Bisglicinato de Magnésio"),
+            },
+            { 
+                nome: "Óxido de Magnésio", 
+                principioAtivo: "Óxido de Magnésio", 
+                dosagem: "500mg (equiv. 300mg Mg elementar)", 
+                categoria: "Mineral", 
+                indicacoes: "Constipação leve a moderada, suplementação de magnésio de baixo custo, azia ocasional.",
+                reacoesAdversas: "Efeito laxativo, diarreia, cólicas abdominais, má absorção de outros medicamentos.",
+                contraIndicacoes: "Insuficiência renal, apendicite, obstrução intestinal.",
+                posologiaDetalhada: "Para constipação: 500-1000mg ao deitar. Para suplementação: 250-500mg/dia.",
+                apresentacao: "Comprimidos 500mg, frasco com 100 comprimidos.",
+                mecanismoAcao: "Reage com ácido gástrico formando cloreto de magnésio, que atrai água para o intestino. Baixa biodisponibilidade (4-15%).",
+                precaucoes: "Não tomar com outros medicamentos (intervalo de 2 horas). Pode interferir na absorção de tetraciclinas, fluoroquinolonas e bifosfonatos.",
+                usoEspecifico: "Forma econômica mas com baixa absorção. Mais indicado como laxativo que como suplemento nutricional.",
+                isFavorite: favorites.includes("Óxido de Magnésio"),
             }
         ];
 
@@ -946,7 +1301,8 @@
                 'Antifúngico': '#65a30d',
                 'Vitamina': '#ea580c',
                 'Suplemento': '#ca8a04',
-                'Antiagregante Plaquetário': '#dc2626'
+                'Antiagregante Plaquetário': '#dc2626',
+                'Mineral': '#8b5cf6'
             };
             return colors[cat] || '#64748b';
         };
@@ -1231,6 +1587,74 @@
                 return;
             }
 
+            // Cálculo especial para Ivermectina (tabela da bula)
+            if (med.tipoCalculo === "ivermectina") {
+                container.innerHTML = `
+                    <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 shadow-inner text-left">
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase">Peso do Paciente (kg)</label>
+                                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter">${p.infoDoseRef || ''}</span>
+                            </div>
+                            <input type="number" id="peso-input" step="0.1" placeholder="Digite o peso..." class="w-full p-4 border-2 border-transparent bg-white rounded-2xl focus:border-indigo-500 outline-none text-2xl font-black shadow-sm transition-all" oninput="runCalculation('${med.nome}')">
+                        </div>
+                        
+                        <div id="result-area" class="grid grid-cols-1 gap-3 mb-4">
+                            <div id="result-box" class="bg-indigo-600 text-white p-5 rounded-2xl text-center shadow-lg">
+                                <p class="text-[10px] uppercase font-bold opacity-80 tracking-widest mb-1">Dose Total</p>
+                                <p id="result-dose" class="text-2xl font-black leading-none">---</p>
+                                <p id="comprimidos-info" class="text-xs mt-1 opacity-80"></p>
+                                <p id="dose-mg-info" class="text-xs mt-1 opacity-80"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 bg-blue-50 p-4 rounded-2xl border border-blue-100 text-left">
+                            <h4 class="text-xs font-bold text-blue-700 mb-2">📋 Tabela Posológica (Bula Oficial)</h4>
+                            <div class="text-xs text-blue-800 space-y-1">
+                                <div class="grid grid-cols-2 gap-1">
+                                    <div class="font-bold">Peso (kg)</div>
+                                    <div class="font-bold">Dose</div>
+                                    <div>15-24 kg</div>
+                                    <div>½ comprimido</div>
+                                    <div>25-35 kg</div>
+                                    <div>1 comprimido</div>
+                                    <div>36-50 kg</div>
+                                    <div>1½ comprimidos</div>
+                                    <div>51-65 kg</div>
+                                    <div>2 comprimidos</div>
+                                    <div>66-79 kg</div>
+                                    <div>2½ comprimidos</div>
+                                    <div>≥80 kg</div>
+                                    <div>200 mcg/kg*</div>
+                                </div>
+                                <p class="text-[10px] text-blue-600 mt-2">*Acima de 80kg: calcular por peso (0,2mg/kg)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 freq-highlight p-5 rounded-2xl flex items-center gap-4 shadow-sm text-left">
+                            <div class="bg-green-500 p-2.5 rounded-xl text-white shadow-md">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase font-bold text-green-700 tracking-widest mb-0.5">Frequência e Horários</p>
+                                <p id="freq-text-display" class="text-lg font-black text-green-900 leading-tight">${p.freqTexto}</p>
+                            </div>
+                        </div>
+                        
+                        <div id="warning-area">
+                            <p id="warning-text" class="text-xs font-bold text-orange-600 mb-2 hidden text-left bg-orange-50 p-2 rounded-lg border border-orange-100 uppercase tracking-tighter text-center font-bold">⚠️ Atenção: Verifique a dose!</p>
+                        </div>
+                    </div>
+                `;
+                
+                if(forceWeightFill && window.lastWeight) { 
+                    document.getElementById('peso-input').value = window.lastWeight; 
+                    runCalculation(med.nome); 
+                }
+                return;
+            }
+
+            // Cálculos normais para outros medicamentos
             let selectionHtml = "";
             if (p.temIntensidade) {
                 selectionHtml = `<div class="mb-4 text-left"><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Opção de Dosagem</label><div class="grid grid-cols-1 sm:grid-cols-3 gap-2">${p.intensidades.map(int => `<button onclick="changeIntensity('${med.nome}', ${int.valor})" class="intensity-btn px-4 py-3 text-xs border rounded-xl transition-all font-semibold text-center ${p.currentIntensidade === int.valor ? 'active' : 'bg-white text-gray-600 border-gray-200'}">${int.label}<br><span class="opacity-70 font-normal">${int.obs}</span></button>`).join('')}</div></div>`;
@@ -1281,13 +1705,108 @@
             const resultBox = document.getElementById('result-box');
 
             if (!peso || peso <= 0) {
-                doseEl.innerText = "---"; dailyEl.innerText = "---"; return;
+                doseEl.innerText = "---"; 
+                if (dailyEl) dailyEl.innerText = "---"; 
+                return;
             }
 
-            let dUnica = "---"; let dTotal = "---"; let warn = false;
-            const formatValue = (val, unit) => `(${Number(val.toFixed(2)).toString().replace('.', ',')} ${unit})`;
+            // Cálculo especial para Ivermectina (tabela da bula)
+            if (med.tipoCalculo === "ivermectina") {
+                let comprimidos = 0;
+                let doseMg = 0;
+                let comprimidosTexto = "";
+                
+                if (peso < 15) {
+                    comprimidosTexto = "Peso abaixo de 15kg - Contraindicado";
+                    warningEl.classList.remove('hidden');
+                    resultBox.classList.replace('bg-indigo-600', 'bg-red-500');
+                } else if (peso >= 15 && peso <= 24) {
+                    comprimidos = 0.5;
+                    comprimidosTexto = "½ comprimido";
+                    doseMg = comprimidos * p.dosePorComprimido;
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                } else if (peso >= 25 && peso <= 35) {
+                    comprimidos = 1;
+                    comprimidosTexto = "1 comprimido";
+                    doseMg = comprimidos * p.dosePorComprimido;
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                } else if (peso >= 36 && peso <= 50) {
+                    comprimidos = 1.5;
+                    comprimidosTexto = "1½ comprimidos";
+                    doseMg = comprimidos * p.dosePorComprimido;
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                } else if (peso >= 51 && peso <= 65) {
+                    comprimidos = 2;
+                    comprimidosTexto = "2 comprimidos";
+                    doseMg = comprimidos * p.dosePorComprimido;
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                } else if (peso >= 66 && peso <= 79) {
+                    comprimidos = 2.5;
+                    comprimidosTexto = "2½ comprimidos";
+                    doseMg = comprimidos * p.dosePorComprimido;
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                } else if (peso >= 80) {
+                    // Acima de 80kg: calcular por peso (200mcg/kg = 0.2mg/kg)
+                    doseMg = peso * p.doseMgPerKg;
+                    comprimidos = Math.round((doseMg / p.dosePorComprimido) * 2) / 2; // Arredonda para meio comprimido
+                    
+                    if (comprimidos === 0.5) {
+                        comprimidosTexto = "½ comprimido";
+                    } else if (comprimidos === 1) {
+                        comprimidosTexto = "1 comprimido";
+                    } else if (comprimidos === 1.5) {
+                        comprimidosTexto = "1½ comprimidos";
+                    } else if (comprimidos === 2) {
+                        comprimidosTexto = "2 comprimidos";
+                    } else if (comprimidos === 2.5) {
+                        comprimidosTexto = "2½ comprimidos";
+                    } else if (comprimidos === 3) {
+                        comprimidosTexto = "3 comprimidos";
+                    } else if (comprimidos === 3.5) {
+                        comprimidosTexto = "3½ comprimidos";
+                    } else if (comprimidos === 4) {
+                        comprimidosTexto = "4 comprimidos";
+                    } else {
+                        comprimidosTexto = `${comprimidos} comprimidos`;
+                    }
+                    warningEl.classList.add('hidden');
+                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                }
+                
+                if (peso < 15) {
+                    doseEl.innerText = "N/A";
+                    document.getElementById('comprimidos-info').innerText = comprimidosTexto;
+                    document.getElementById('dose-mg-info').innerText = "";
+                } else {
+                    doseEl.innerText = `${comprimidosTexto}`;
+                    document.getElementById('comprimidos-info').innerText = `(${doseMg.toFixed(1)} mg total)`;
+                    document.getElementById('dose-mg-info').innerText = `Dose: ${(doseMg/peso).toFixed(2)} mg/kg`;
+                }
+                return;
+            }
 
-            if (med.tipoCalculo === "tabelaDecongexGotas") {
+            // Cálculos normais para outros medicamentos
+            let dUnica = "---"; let dTotal = "---"; let warn = false;
+            const formatValue = (val, unit) => `${Number(val.toFixed(2)).toString().replace('.', ',')} ${unit}`;
+
+            // CORREÇÃO 1: Loratadina Xarope - bula específica
+            if (med.nome.includes("Loratadina Xarope")) {
+                // De acordo com a bula: até 30kg = 5ml, acima de 30kg = 10ml
+                if (peso <= 30) {
+                    dUnica = "5 mL";
+                    dTotal = "5 mL";
+                } else {
+                    dUnica = "10 mL";
+                    dTotal = "10 mL";
+                }
+            }
+            // Cálculos existentes...
+            else if (med.tipoCalculo === "tabelaDecongexGotas") {
                 let total = Math.min(peso * 2, 60);
                 dUnica = formatValue(Math.round(total/3), "Gotas"); dTotal = formatValue(total, "Gotas");
                 if(total >= 60) warn = true;
@@ -1320,6 +1839,17 @@
                 let g = peso < 5 ? 0 : (peso <= 8 ? 5 : (peso <= 15 ? 10 : (peso <= 23 ? 15 : (peso <= 30 ? 20 : (peso <= 45 ? 30 : (peso <= 53 ? 35 : 40))))));
                 dUnica = g > 0 ? formatValue(g, "Gotas") : "N/A"; dTotal = g > 0 ? formatValue(g*4, "Gotas") : "---";
             }
+            // CORREÇÃO 2: Novalgina Solução Oral 50mg/mL
+            else if (med.nome.includes("Novalgina Solução Oral 50mg/mL")) {
+                let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
+                let mgPorDose = peso * mgKg;
+                let mlPorDose = mgPorDose / p.concentracaoMgPerMl;
+                
+                dUnica = formatValue(mlPorDose, "mL");
+                dTotal = formatValue(mlPorDose * (p.freqDosesPorDia || 4), "mL");
+                
+                if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
+            }
             else if (med.tipoCalculo === "intensidade" || med.tipoCalculo === "faixa") {
                 let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
                 let mgTotal = peso * mgKg;
@@ -1333,9 +1863,15 @@
                 if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
             }
 
-            doseEl.innerText = dUnica; dailyEl.innerText = dTotal;
-            if(warn) { warningEl.classList.remove('hidden'); resultBox.classList.replace('bg-indigo-600', 'bg-orange-500'); }
-            else { warningEl.classList.add('hidden'); resultBox.classList.replace('bg-orange-500', 'bg-indigo-600'); }
+            doseEl.innerText = dUnica; 
+            if (dailyEl) dailyEl.innerText = dTotal;
+            if(warn) { 
+                warningEl.classList.remove('hidden'); 
+                resultBox.classList.replace('bg-indigo-600', 'bg-orange-500'); 
+            } else { 
+                warningEl.classList.add('hidden'); 
+                resultBox.classList.replace('bg-orange-500', 'bg-indigo-600'); 
+            }
         };
 
         window.changeIntensity = (nome, valor) => {
@@ -1367,13 +1903,13 @@
                 </div>
             </div>
             <h1 class="text-4xl font-black text-gray-800 mt-4 tracking-tighter">Sistema de Bulas & Calculadora</h1>
-            <p class="text-gray-500 text-xs mt-1 uppercase tracking-[0.3em] font-black">Sistema Profissional de Dispensação v5.2</p>
+            <p class="text-gray-500 text-xs mt-1 uppercase tracking-[0.3em] font-black">Sistema Profissional de Dispensação v5.3</p>
             <p class="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">Sistema completo com informações farmacêuticas detalhadas, calculadora de doses pediátricas e bulas expandidas para apoio à dispensação.</p>
         </header>
 
         <div class="max-w-2xl mx-auto mb-6">
             <div class="relative group text-left">
-                <input type="text" id="search-input" placeholder="Qual medicamento procura? Ex: Amoxicilina, Paracetamol..." 
+                <input type="text" id="search-input" placeholder="Qual medicamento procura? Ex: Amoxicilina, Paracetamol, Magnésio..." 
                     oninput="searchMedicamentos(this.value)" 
                     class="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-100 rounded-3xl shadow-xl focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-500 outline-none transition-all text-lg font-bold">
                 <div class="absolute left-5 top-5 text-gray-300 group-focus-within:text-indigo-500 transition-colors">
@@ -1419,7 +1955,7 @@
                     <p class="text-sm text-gray-600">Este sistema é uma ferramenta de apoio à dispensação. Sempre consulte um profissional de saúde para prescrições. Doses podem variar conforme condição clínica.</p>
                 </div>
             </div>
-            <p class="text-center text-gray-400 text-xs mt-8">Souza Farma - Farmácia do Trabalhador © 2024 - Sistema de Gestão Farmacêutica v5.2</p>
+            <p class="text-center text-gray-400 text-xs mt-8">Souza Farma - Farmácia do Trabalhador © 2024 - Sistema de Gestão Farmacêutica v5.3</p>
         </div>
     </div>
 
