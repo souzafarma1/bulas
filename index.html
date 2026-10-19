@@ -1694,183 +1694,196 @@
         };
 
         window.runCalculation = (medNome) => {
-            const med = window.allMedicamentos.find(m => m.nome === medNome);
-            const peso = parseFloat(document.getElementById('peso-input').value);
-            window.lastWeight = peso;
-            const p = med.pesoBaseCalculo;
-            
-            const doseEl = document.getElementById('result-dose');
-            const dailyEl = document.getElementById('result-daily');
-            const warningEl = document.getElementById('warning-text');
-            const resultBox = document.getElementById('result-box');
-
-            if (!peso || peso <= 0) {
-                doseEl.innerText = "---"; 
-                if (dailyEl) dailyEl.innerText = "---"; 
-                return;
-            }
-
-            // Cálculo especial para Ivermectina (tabela da bula)
-            if (med.tipoCalculo === "ivermectina") {
-                let comprimidos = 0;
-                let doseMg = 0;
-                let comprimidosTexto = "";
+            try {
+                const med = window.allMedicamentos.find(m => m.nome === medNome);
+                if (!med) return;
                 
-                if (peso < 15) {
-                    comprimidosTexto = "Peso abaixo de 15kg - Contraindicado";
-                    warningEl.classList.remove('hidden');
-                    resultBox.classList.replace('bg-indigo-600', 'bg-red-500');
-                } else if (peso >= 15 && peso <= 24) {
-                    comprimidos = 0.5;
-                    comprimidosTexto = "½ comprimido";
-                    doseMg = comprimidos * p.dosePorComprimido;
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
-                } else if (peso >= 25 && peso <= 35) {
-                    comprimidos = 1;
-                    comprimidosTexto = "1 comprimido";
-                    doseMg = comprimidos * p.dosePorComprimido;
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
-                } else if (peso >= 36 && peso <= 50) {
-                    comprimidos = 1.5;
-                    comprimidosTexto = "1½ comprimidos";
-                    doseMg = comprimidos * p.dosePorComprimido;
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
-                } else if (peso >= 51 && peso <= 65) {
-                    comprimidos = 2;
-                    comprimidosTexto = "2 comprimidos";
-                    doseMg = comprimidos * p.dosePorComprimido;
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
-                } else if (peso >= 66 && peso <= 79) {
-                    comprimidos = 2.5;
-                    comprimidosTexto = "2½ comprimidos";
-                    doseMg = comprimidos * p.dosePorComprimido;
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
-                } else if (peso >= 80) {
-                    // Acima de 80kg: calcular por peso (200mcg/kg = 0.2mg/kg)
-                    doseMg = peso * p.doseMgPerKg;
-                    comprimidos = Math.round((doseMg / p.dosePorComprimido) * 2) / 2; // Arredonda para meio comprimido
+                const peso = parseFloat(document.getElementById('peso-input').value);
+                window.lastWeight = peso;
+                const p = med.pesoBaseCalculo;
+                
+                const doseEl = document.getElementById('result-dose');
+                const dailyEl = document.getElementById('result-daily');
+                const warningEl = document.getElementById('warning-text');
+                const resultBox = document.getElementById('result-box');
+
+                if (!peso || peso <= 0) {
+                    doseEl.innerText = "---"; 
+                    if (dailyEl) dailyEl.innerText = "---"; 
+                    return;
+                }
+
+                // Cálculo especial para Ivermectina (tabela da bula)
+                if (med.tipoCalculo === "ivermectina") {
+                    let comprimidos = 0;
+                    let doseMg = 0;
+                    let comprimidosTexto = "";
                     
-                    if (comprimidos === 0.5) {
+                    if (peso < 15) {
+                        comprimidosTexto = "Peso abaixo de 15kg - Contraindicado";
+                        warningEl.classList.remove('hidden');
+                        resultBox.classList.replace('bg-indigo-600', 'bg-red-500');
+                    } else if (peso >= 15 && peso <= 24) {
+                        comprimidos = 0.5;
                         comprimidosTexto = "½ comprimido";
-                    } else if (comprimidos === 1) {
+                        doseMg = comprimidos * p.dosePorComprimido;
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    } else if (peso >= 25 && peso <= 35) {
+                        comprimidos = 1;
                         comprimidosTexto = "1 comprimido";
-                    } else if (comprimidos === 1.5) {
+                        doseMg = comprimidos * p.dosePorComprimido;
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    } else if (peso >= 36 && peso <= 50) {
+                        comprimidos = 1.5;
                         comprimidosTexto = "1½ comprimidos";
-                    } else if (comprimidos === 2) {
+                        doseMg = comprimidos * p.dosePorComprimido;
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    } else if (peso >= 51 && peso <= 65) {
+                        comprimidos = 2;
                         comprimidosTexto = "2 comprimidos";
-                    } else if (comprimidos === 2.5) {
+                        doseMg = comprimidos * p.dosePorComprimido;
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    } else if (peso >= 66 && peso <= 79) {
+                        comprimidos = 2.5;
                         comprimidosTexto = "2½ comprimidos";
-                    } else if (comprimidos === 3) {
-                        comprimidosTexto = "3 comprimidos";
-                    } else if (comprimidos === 3.5) {
-                        comprimidosTexto = "3½ comprimidos";
-                    } else if (comprimidos === 4) {
-                        comprimidosTexto = "4 comprimidos";
-                    } else {
-                        comprimidosTexto = `${comprimidos} comprimidos`;
+                        doseMg = comprimidos * p.dosePorComprimido;
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    } else if (peso >= 80) {
+                        // Acima de 80kg: calcular por peso (200mcg/kg = 0.2mg/kg)
+                        doseMg = peso * p.doseMgPerKg;
+                        comprimidos = Math.round((doseMg / p.dosePorComprimido) * 2) / 2; // Arredonda para meio comprimido
+                        
+                        if (comprimidos === 0.5) {
+                            comprimidosTexto = "½ comprimido";
+                        } else if (comprimidos === 1) {
+                            comprimidosTexto = "1 comprimido";
+                        } else if (comprimidos === 1.5) {
+                            comprimidosTexto = "1½ comprimidos";
+                        } else if (comprimidos === 2) {
+                            comprimidosTexto = "2 comprimidos";
+                        } else if (comprimidos === 2.5) {
+                            comprimidosTexto = "2½ comprimidos";
+                        } else if (comprimidos === 3) {
+                            comprimidosTexto = "3 comprimidos";
+                        } else if (comprimidos === 3.5) {
+                            comprimidosTexto = "3½ comprimidos";
+                        } else if (comprimidos === 4) {
+                            comprimidosTexto = "4 comprimidos";
+                        } else {
+                            comprimidosTexto = `${comprimidos} comprimidos`;
+                        }
+                        warningEl.classList.add('hidden');
+                        resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
                     }
-                    warningEl.classList.add('hidden');
-                    resultBox.classList.replace('bg-red-500', 'bg-indigo-600');
+                    
+                    if (peso < 15) {
+                        doseEl.innerText = "N/A";
+                        document.getElementById('comprimidos-info').innerText = comprimidosTexto;
+                        document.getElementById('dose-mg-info').innerText = "";
+                    } else {
+                        doseEl.innerText = `${comprimidosTexto}`;
+                        document.getElementById('comprimidos-info').innerText = `(${doseMg.toFixed(1)} mg total)`;
+                        document.getElementById('dose-mg-info').innerText = `Dose: ${(doseMg/peso).toFixed(2)} mg/kg`;
+                    }
+                    return;
                 }
-                
-                if (peso < 15) {
-                    doseEl.innerText = "N/A";
-                    document.getElementById('comprimidos-info').innerText = comprimidosTexto;
-                    document.getElementById('dose-mg-info').innerText = "";
-                } else {
-                    doseEl.innerText = `${comprimidosTexto}`;
-                    document.getElementById('comprimidos-info').innerText = `(${doseMg.toFixed(1)} mg total)`;
-                    document.getElementById('dose-mg-info').innerText = `Dose: ${(doseMg/peso).toFixed(2)} mg/kg`;
+
+                // Cálculos normais para outros medicamentos
+                let dUnica = "---"; let dTotal = "---"; let warn = false;
+                const formatValue = (val, unit) => `${Number(val.toFixed(2)).toString().replace('.', ',')} ${unit}`;
+
+                // CORREÇÃO 1: Loratadina Xarope - bula específica
+                if (med.nome.includes("Loratadina Xarope")) {
+                    // De acordo com a bula: até 30kg = 5ml, acima de 30kg = 10ml
+                    if (peso <= 30) {
+                        dUnica = "5 mL";
+                        dTotal = "5 mL";
+                    } else {
+                        dUnica = "10 mL";
+                        dTotal = "10 mL";
+                    }
                 }
-                return;
-            }
-
-            // Cálculos normais para outros medicamentos
-            let dUnica = "---"; let dTotal = "---"; let warn = false;
-            const formatValue = (val, unit) => `${Number(val.toFixed(2)).toString().replace('.', ',')} ${unit}`;
-
-            // CORREÇÃO 1: Loratadina Xarope - bula específica
-            if (med.nome.includes("Loratadina Xarope")) {
-                // De acordo com a bula: até 30kg = 5ml, acima de 30kg = 10ml
-                if (peso <= 30) {
-                    dUnica = "5 mL";
-                    dTotal = "5 mL";
-                } else {
-                    dUnica = "10 mL";
-                    dTotal = "10 mL";
+                // Cálculos existentes...
+                else if (med.tipoCalculo === "tabelaDecongexGotas") {
+                    let total = Math.min(peso * 2, 60);
+                    dUnica = formatValue(Math.round(total/3), "Gotas"); dTotal = formatValue(total, "Gotas");
+                    if(total >= 60) warn = true;
                 }
-            }
-            // Cálculos existentes...
-            else if (med.tipoCalculo === "tabelaDecongexGotas") {
-                let total = Math.min(peso * 2, 60);
-                dUnica = formatValue(Math.round(total/3), "Gotas"); dTotal = formatValue(total, "Gotas");
-                if(total >= 60) warn = true;
-            }
-            else if (med.tipoCalculo === "tabelaDecongex") {
-                if(peso < 12) { dUnica = "N/A"; }
-                else if(peso < 35) { dUnica = formatValue(5, "mL"); dTotal = formatValue(20, "mL"); }
-                else { dUnica = formatValue(15, "mL"); dTotal = formatValue(60, "mL"); }
-            }
-            else if (med.nome.includes("Solução 3 mg/mL")) {
-                let mgKg = p.currentIntensidade; let mgT = Math.min(peso * mgKg, 60);
-                dUnica = formatValue(mgT/3, "mL"); dTotal = formatValue(mgT/3, "mL");
-                if(peso * mgKg >= 60) warn = true;
-            }
-            else if (med.nome.includes("Predsim Gotas 11 mg/mL")) {
-                let mgKg = p.currentIntensidade; let gtt = Math.min(Math.round((peso * mgKg)/0.55), 145);
-                dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(145, "Gotas");
-                if(Math.round((peso*mgKg)/0.55) >= 145) warn = true;
-            }
-            else if (med.tipoCalculo === "tabelaBuscopanComposto") {
-                let gtt = peso < 10 ? 0 : Math.min(Math.round(peso * 0.5), 40);
-                dUnica = gtt > 0 ? formatValue(gtt, "Gotas") : "N/A"; dTotal = gtt > 0 ? formatValue(gtt * 3, "Gotas") : "---";
-            }
-            else if (med.tipoCalculo === "tabelaBuscopan") {
-                let gtt = 0;
-                if(peso < 6) gtt = Math.round(peso*3); else if(peso < 10) gtt = Math.round(peso*1.4); else gtt = Math.min(Math.round(peso), 40);
-                dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(gtt * 3, "Gotas");
-            }
-            else if (med.tipoCalculo === "tabelaDipirona") {
-                let g = peso < 5 ? 0 : (peso <= 8 ? 5 : (peso <= 15 ? 10 : (peso <= 23 ? 15 : (peso <= 30 ? 20 : (peso <= 45 ? 30 : (peso <= 53 ? 35 : 40))))));
-                dUnica = g > 0 ? formatValue(g, "Gotas") : "N/A"; dTotal = g > 0 ? formatValue(g*4, "Gotas") : "---";
-            }
-            // CORREÇÃO 2: Novalgina Solução Oral 50mg/mL
-            else if (med.nome.includes("Novalgina Solução Oral 50mg/mL")) {
-                let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
-                let mgPorDose = peso * mgKg;
-                let mlPorDose = mgPorDose / p.concentracaoMgPerMl;
-                
-                dUnica = formatValue(mlPorDose, "mL");
-                dTotal = formatValue(mlPorDose * (p.freqDosesPorDia || 4), "mL");
-                
-                if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
-            }
-            else if (med.tipoCalculo === "intensidade" || med.tipoCalculo === "faixa") {
-                let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
-                let mgTotal = peso * mgKg;
-                let unit = p.unidade || "mL";
-                let valUnico = (mgTotal / (p.freqDosesPorDia || 1)) / p.concentracaoMgPerMl;
-                
-                if(unit === "Gotas") valUnico = Math.round((mgTotal / p.freqDosesPorDia) / (p.concentracaoMgPerMl/20));
-                
-                dUnica = formatValue(valUnico, unit);
-                dTotal = formatValue(valUnico * (p.freqDosesPorDia || 1), unit);
-                if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
-            }
+                else if (med.tipoCalculo === "tabelaDecongex") {
+                    if(peso < 12) { dUnica = "N/A"; }
+                    else if(peso < 35) { dUnica = formatValue(5, "mL"); dTotal = formatValue(20, "mL"); }
+                    else { dUnica = formatValue(15, "mL"); dTotal = formatValue(60, "mL"); }
+                }
+                else if (med.nome.includes("Solução 3 mg/mL")) {
+                    let mgKg = p.currentIntensidade; let mgT = Math.min(peso * mgKg, 60);
+                    dUnica = formatValue(mgT/3, "mL"); dTotal = formatValue(mgT/3, "mL");
+                    if(peso * mgKg >= 60) warn = true;
+                }
+                else if (med.nome.includes("Predsim Gotas 11 mg/mL")) {
+                    let mgKg = p.currentIntensidade; let gtt = Math.min(Math.round((peso * mgKg)/0.55), 145);
+                    dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(145, "Gotas");
+                    if(Math.round((peso*mgKg)/0.55) >= 145) warn = true;
+                }
+                else if (med.tipoCalculo === "tabelaBuscopanComposto") {
+                    let gtt = peso < 10 ? 0 : Math.min(Math.round(peso * 0.5), 40);
+                    dUnica = gtt > 0 ? formatValue(gtt, "Gotas") : "N/A"; dTotal = gtt > 0 ? formatValue(gtt * 3, "Gotas") : "---";
+                }
+                else if (med.tipoCalculo === "tabelaBuscopan") {
+                    let gtt = 0;
+                    if(peso < 6) gtt = Math.round(peso*3); else if(peso < 10) gtt = Math.round(peso*1.4); else gtt = Math.min(Math.round(peso), 40);
+                    dUnica = formatValue(gtt, "Gotas"); dTotal = formatValue(gtt * 3, "Gotas");
+                }
+                else if (med.tipoCalculo === "tabelaDipirona") {
+                    let g = peso < 5 ? 0 : (peso <= 8 ? 5 : (peso <= 15 ? 10 : (peso <= 23 ? 15 : (peso <= 30 ? 20 : (peso <= 45 ? 30 : (peso <= 53 ? 35 : 40))))));
+                    dUnica = g > 0 ? formatValue(g, "Gotas") : "N/A"; dTotal = g > 0 ? formatValue(g*4, "Gotas") : "---";
+                }
+                // CORREÇÃO 2: Novalgina Solução Oral 50mg/mL
+                else if (med.nome.includes("Novalgina Solução Oral 50mg/mL")) {
+                    let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
+                    let mgPorDose = peso * mgKg;
+                    let mlPorDose = mgPorDose / p.concentracaoMgPerMl;
+                    
+                    dUnica = formatValue(mlPorDose, "mL");
+                    dTotal = formatValue(mlPorDose * (p.freqDosesPorDia || 4), "mL");
+                    
+                    if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
+                }
+                else if (med.tipoCalculo === "intensidade" || med.tipoCalculo === "faixa") {
+                    let mgKg = p.currentIntensidade || parseFloat(document.getElementById('dose-slider')?.value || p.defaultDose);
+                    let mgTotal = peso * mgKg;
+                    let unit = p.unidade || "mL";
+                    let valUnico = (mgTotal / (p.freqDosesPorDia || 1)) / p.concentracaoMgPerMl;
+                    
+                    // CORREÇÃO DE GOTAS AQUI:
+                    // Multiplica o volume em mL por 20 para achar o número de gotas
+                    if(unit === "Gotas") {
+                        valUnico = valUnico * 20; 
+                    }
+                    
+                    dUnica = formatValue(valUnico, unit);
+                    dTotal = formatValue(valUnico * (p.freqDosesPorDia || 1), unit);
+                    if(document.getElementById('dose-val')) document.getElementById('dose-val').innerText = mgKg;
+                }
 
-            doseEl.innerText = dUnica; 
-            if (dailyEl) dailyEl.innerText = dTotal;
-            if(warn) { 
-                warningEl.classList.remove('hidden'); 
-                resultBox.classList.replace('bg-indigo-600', 'bg-orange-500'); 
-            } else { 
-                warningEl.classList.add('hidden'); 
-                resultBox.classList.replace('bg-orange-500', 'bg-indigo-600'); 
+                doseEl.innerText = dUnica; 
+                if (dailyEl) dailyEl.innerText = dTotal;
+                if(warn) { 
+                    warningEl.classList.remove('hidden'); 
+                    resultBox.classList.replace('bg-indigo-600', 'bg-orange-500'); 
+                } else { 
+                    warningEl.classList.add('hidden'); 
+                    resultBox.classList.replace('bg-orange-500', 'bg-indigo-600'); 
+                }
+            } catch (error) {
+                console.error("Erro no cálculo:", error);
+                // Fallback visual para não travar a tela
+                const doseEl = document.getElementById('result-dose');
+                if(doseEl) doseEl.innerText = "Erro";
             }
         };
 
