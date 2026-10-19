@@ -681,7 +681,21 @@
                 usoEspecifico: "Administrar com alimentos ou leite. Efeito antipirético em 30-60 min, duração 6-8h.",
                 isFavorite: favorites.includes("Ibuprofeno 100mg/mL Gotas"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(5 a 10 mg/kg/dose)", temIntensidade: true, intensidades: [{ label: "Leve", valor: 5, obs: "(5 mg/kg)" }, { label: "Intensa", valor: 10, obs: "(10 mg/kg)" }], currentIntensidade: 5, concentracaoMgPerMl: 100, unidade: "Gotas", maxDosePorTomada: 20, maxDoseDiaria: 80, freqTexto: "A cada 6 ou 8 horas." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(5 a 10 mg/kg/dose)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Dose Leve", valor: 5, obs: "(5 mg/kg)" }, 
+                        { label: "Dose Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
+                        { label: "Dose Alta", valor: 10, obs: "(10 mg/kg)" }
+                    ], 
+                    currentIntensidade: 5, 
+                    concentracaoMgPerMl: 100, 
+                    unidade: "Gotas", 
+                    maxDosePorTomada: 20, 
+                    maxDoseDiaria: 80, 
+                    freqTexto: "A cada 6 ou 8 horas." 
+                } 
             },
             { 
                 nome: "Ibuprofeno 50mg/mL Gotas", 
@@ -692,7 +706,19 @@
                 reacoesAdversas: "Mesmo perfil de segurança do ibuprofeno 100mg/mL.",
                 isFavorite: favorites.includes("Ibuprofeno 50mg/mL Gotas"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(5 a 10 mg/kg/dose)", currentIntensidade: 5, concentracaoMgPerMl: 50, unidade: "Gotas", freqTexto: "A cada 6 ou 8 horas." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(5 a 10 mg/kg/dose)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Dose Leve", valor: 5, obs: "(5 mg/kg)" }, 
+                        { label: "Dose Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
+                        { label: "Dose Alta", valor: 10, obs: "(10 mg/kg)" }
+                    ], 
+                    currentIntensidade: 5, 
+                    concentracaoMgPerMl: 50, 
+                    unidade: "Gotas", 
+                    freqTexto: "A cada 6 ou 8 horas." 
+                } 
             },
             { 
                 nome: "Paracetamol 200mg/mL Gotas", 
@@ -708,7 +734,19 @@
                 usoEspecifico: "Medicamento de primeira linha para febre em crianças. Não possui atividade anti-inflamatória significativa.",
                 isFavorite: favorites.includes("Paracetamol 200mg/mL Gotas"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(10 a 15 mg/kg/dose)", currentIntensidade: 12, concentracaoMgPerMl: 200, unidade: "Gotas", freqTexto: "A cada 4 ou 6 horas." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(10 a 15 mg/kg/dose)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Dose Mínima", valor: 10, obs: "(10 mg/kg)" }, 
+                        { label: "Dose Padrão", valor: 12, obs: "(12 mg/kg)" }, 
+                        { label: "Dose Máxima", valor: 15, obs: "(15 mg/kg)" }
+                    ], 
+                    currentIntensidade: 12, 
+                    concentracaoMgPerMl: 200, 
+                    unidade: "Gotas", 
+                    freqTexto: "A cada 4 ou 6 horas." 
+                } 
             },
             
             // --- GASTRO E ANTIEMÉTICOS ---
