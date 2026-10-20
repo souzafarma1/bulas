@@ -502,7 +502,21 @@
                 usoEspecifico: "Administrar pela manhã (7-8h) para mimetizar ritmo circadiano do cortisol. Suspensão lenta: redução de 10-20% a cada 1-2 semanas.",
                 isFavorite: favorites.includes("Predsim® Solução 3 mg/mL"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", temIntensidade: true, intensidades: [{ label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, { label: "Intermediária", valor: 1.0, obs: "(1.0 mg/kg)" }, { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }], currentIntensidade: 0.5, freqDosesPorDia: 1, concentracaoMgPerMl: 3, unidade: "mL", maxDoseDiariaMg: 60, freqTexto: "Dose total diária conforme orientação." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(0,14 a 2 mg/kg/dia)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, 
+                        { label: "Intermediária", valor: 1.0, obs: "(1.0 mg/kg)" }, 
+                        { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }
+                    ], 
+                    currentIntensidade: 0.5, 
+                    freqDosesPorDia: 1, 
+                    concentracaoMgPerMl: 3, 
+                    unidade: "mL", 
+                    maxDoseDiariaMg: 60, 
+                    freqTexto: "Dose total diária conforme orientação." 
+                } 
             },
             { 
                 nome: "Fosfato Sódico de Prednisolona 3mg/mL", 
@@ -513,7 +527,20 @@
                 reacoesAdversas: "Retenção hídrica, aumento de apetite, irritabilidade, insônia.",
                 isFavorite: favorites.includes("Fosfato Sódico de Prednisolona 3mg/mL"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", currentIntensidade: 0.5, concentracaoMgPerMl: 3, unidade: "mL", freqTexto: "Utilizar pipeta graduada." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(0,14 a 2 mg/kg/dia)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, 
+                        { label: "Intermediária", valor: 1.0, obs: "(1.0 mg/kg)" }, 
+                        { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }
+                    ], 
+                    currentIntensidade: 0.5, 
+                    freqDosesPorDia: 1, 
+                    concentracaoMgPerMl: 3, 
+                    unidade: "mL", 
+                    freqTexto: "Utilizar pipeta graduada." 
+                } 
             },
             { 
                 nome: "Predsim Gotas 11 mg/mL", 
@@ -526,7 +553,20 @@
                 contraIndicacoes: "Hipersensibilidade, infecções fúngicas sistêmicas.",
                 isFavorite: favorites.includes("Predsim Gotas 11 mg/mL"),
                 tipoCalculo: "intensidade", 
-                pesoBaseCalculo: { infoDoseRef: "(0,14 a 2 mg/kg/dia)", temIntensidade: true, intensidades: [{ label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }], currentIntensidade: 0.5, concentracaoMgPerMl: 11, unidade: "Gotas", maxDoseDiaria: 145, freqTexto: "Conforme peso do paciente." } 
+                pesoBaseCalculo: { 
+                    infoDoseRef: "(0,14 a 2 mg/kg/dia)", 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Manutenção", valor: 0.5, obs: "(0.5 mg/kg)" }, 
+                        { label: "Ataque", valor: 2.0, obs: "(2.0 mg/kg)" }
+                    ], 
+                    currentIntensidade: 0.5, 
+                    freqDosesPorDia: 1, 
+                    concentracaoMgPerMl: 11, 
+                    unidade: "Gotas", 
+                    maxDoseDiaria: 145, 
+                    freqTexto: "Conforme peso do paciente." 
+                } 
             },
 
             // --- ANTI-HISTAMÍNICOS ---
@@ -655,12 +695,16 @@
                 posologiaDetalhada: "Crianças: 10-15 mg/kg/dose a cada 6-8 horas. Adultos: 500-1000mg (10-20mL) a cada 6-8 horas. Dose máxima diária: 4g.",
                 apresentacao: "Frasco 100mL.",
                 isFavorite: favorites.includes("Novalgina Solução Oral 50mg/mL"),
-                tipoCalculo: "faixa", 
+                tipoCalculo: "intensidade", 
                 pesoBaseCalculo: { 
                     infoDoseRef: "(10-15 mg/kg/dose)", 
-                    doseMgPerKgPerDiaMin: 10, 
-                    doseMgPerKgPerDiaMax: 15, 
-                    defaultDose: 12, 
+                    temIntensidade: true, 
+                    intensidades: [
+                        { label: "Mínima", valor: 10, obs: "(10 mg/kg)" }, 
+                        { label: "Padrão", valor: 12, obs: "(12 mg/kg)" }, 
+                        { label: "Máxima", valor: 15, obs: "(15 mg/kg)" }
+                    ], 
+                    currentIntensidade: 12, 
                     freqDosesPorDia: 4, 
                     concentracaoMgPerMl: 50, 
                     freqTexto: "A cada 6 horas (4 vezes ao dia)." 
@@ -685,15 +729,16 @@
                     infoDoseRef: "(5 a 10 mg/kg/dose)", 
                     temIntensidade: true, 
                     intensidades: [
-                        { label: "Dose Leve", valor: 5, obs: "(5 mg/kg)" }, 
-                        { label: "Dose Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
-                        { label: "Dose Alta", valor: 10, obs: "(10 mg/kg)" }
+                        { label: "Mínima", valor: 5, obs: "(5 mg/kg)" }, 
+                        { label: "Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
+                        { label: "Máxima", valor: 10, obs: "(10 mg/kg)" }
                     ], 
                     currentIntensidade: 5, 
                     concentracaoMgPerMl: 100, 
                     unidade: "Gotas", 
                     maxDosePorTomada: 20, 
                     maxDoseDiaria: 80, 
+                    freqDosesPorDia: 3,
                     freqTexto: "A cada 6 ou 8 horas." 
                 } 
             },
@@ -710,13 +755,14 @@
                     infoDoseRef: "(5 a 10 mg/kg/dose)", 
                     temIntensidade: true, 
                     intensidades: [
-                        { label: "Dose Leve", valor: 5, obs: "(5 mg/kg)" }, 
-                        { label: "Dose Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
-                        { label: "Dose Alta", valor: 10, obs: "(10 mg/kg)" }
+                        { label: "Mínima", valor: 5, obs: "(5 mg/kg)" }, 
+                        { label: "Padrão", valor: 7.5, obs: "(7.5 mg/kg)" }, 
+                        { label: "Máxima", valor: 10, obs: "(10 mg/kg)" }
                     ], 
                     currentIntensidade: 5, 
                     concentracaoMgPerMl: 50, 
                     unidade: "Gotas", 
+                    freqDosesPorDia: 3,
                     freqTexto: "A cada 6 ou 8 horas." 
                 } 
             },
@@ -738,13 +784,14 @@
                     infoDoseRef: "(10 a 15 mg/kg/dose)", 
                     temIntensidade: true, 
                     intensidades: [
-                        { label: "Dose Mínima", valor: 10, obs: "(10 mg/kg)" }, 
-                        { label: "Dose Padrão", valor: 12, obs: "(12 mg/kg)" }, 
-                        { label: "Dose Máxima", valor: 15, obs: "(15 mg/kg)" }
+                        { label: "Mínima", valor: 10, obs: "(10 mg/kg)" }, 
+                        { label: "Padrão", valor: 12, obs: "(12 mg/kg)" }, 
+                        { label: "Máxima", valor: 15, obs: "(15 mg/kg)" }
                     ], 
                     currentIntensidade: 12, 
                     concentracaoMgPerMl: 200, 
                     unidade: "Gotas", 
+                    freqDosesPorDia: 4,
                     freqTexto: "A cada 4 ou 6 horas." 
                 } 
             },
